@@ -1,16 +1,19 @@
 <template>
   <div class="searchReport">
-    <div class="site_box">
-      <div class="site">
-        <ul>
-          <li>当前位置 ：</li>
-          <li><a href="/">首页</a></li>
-          <li>&nbsp;>&nbsp;</li>
-          <li><a href="/moreReport">诊断报告</a></li>
-        </ul>
-      </div>
+
+    <div class="tab-change">
+      <span class="tab-tips">最新上架资产：</span>
+      <ul>
+        <li v-for="(item,index) of searchField">
+          <input type="radio" name="radio"  @click="searchToggle(index)">
+          <div class="radio-box">
+            <p>{{item}}</p>
+          </div>
+        </li>
+      </ul>
     </div>
-    <div class="search_type">
+
+    <div v-if="isMoreSearch" class="search_type">
       <div class="type_territory">
         <span class="type_span">省市：</span>
         <area-select class="territory_input" v-model="territoryInput" :data="pca" type="text" @change="acquireSearchReportList"></area-select>
@@ -25,7 +28,55 @@
         <span class="type_span">VIN码：</span>
         <el-input class="vin_input" v-model="vinInput" placeholder="请输入VIN" size="small" style="width:334px" @change="acquireSearchReportList"></el-input>
       </div>
+      <div class="type_vin">
+        <span class="type_span">技师号：</span>
+        <el-input class="vin_input" v-model="vinInput" placeholder="请输入技师号" size="small" style="width:334px" @change="acquireSearchReportList"></el-input>
+      </div>
+      <div class="type_vin">
+        <span class="type_span">里程：</span>
+        <el-input class="vin_input" v-model="vinInput" placeholder="请输入里程" size="small" style="width:334px" @change="acquireSearchReportList"></el-input>
+      </div>
+      <div class="type_vin">
+        <span class="type_span">诊断设备号：</span>
+        <el-input class="vin_input" v-model="vinInput" placeholder="请输入诊断设备号" size="small" style="width:334px" @change="acquireSearchReportList"></el-input>
+      </div>
+      <div class="type_vin">
+        <span class="type_span">高级选项：</span>
+        <template>
+          <el-select v-model="value1" size="small" style="margin-right: 25px" placeholder="车系品牌">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </template>
+        <template>
+          <el-select v-model="value2" size="small" style="margin-right: 25px" placeholder="车年款">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </template>
+        <template>
+          <el-select v-model="value3" size="small" placeholder="车厂">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </template>
+      </div>
     </div>
+
+
+
     <div class="report_list">
       <div class="fr_report" v-for="(item,index) of searchReportList" :key="item.id">
         <h4><a href="/reportDetails" @click="getReportDetails(item.id)" v-html="item.assetname"></a></h4>
@@ -100,6 +151,28 @@
         apiKey: "",
         assetId: "",
         id: "",
+
+        isMoreSearch:false,
+        searchField: ["诊断报告", "维修案例"],
+        options: [{
+          value: '选项1',
+          label: '一汽大众'
+        }, {
+          value: '选项2',
+          label: '本田'
+        }, {
+          value: '选项3',
+          label: '宝马'
+        }, {
+          value: '选项4',
+          label: '广汽传祺'
+        }, {
+          value: '选项5',
+          label: '雪佛莱'
+        }],
+        value1: '',
+        value2: '',
+        value3: '',
       }
     },
     mounted() {
@@ -130,6 +203,14 @@
       }
     },
     methods: {
+      searchToggle(index){
+        console.log(index)
+        if (index === 0){
+          this.isMoreSearch = true
+        } else {
+          this.isMoreSearch = false
+        }
+      },
       open() {
         this.$confirm('此操作需要先登录, 是否登录?', '提示', {
           confirmButtonText: '是',
@@ -261,29 +342,52 @@
 
 <style scoped lang="stylus">
   .searchReport {
-    .site_box {
-      margin 0 auto
-      width 100%
-      background-color: #e7e7e7;
-      .site {
-        width 1212px
-        height 34px
-        line-height 34px
-        margin 0 auto
-        ul {
-          padding-left 8px
-          font-size 0
-          li {
-            vertical-align top
-            display inline-block
-            font-size 14px
-            a {
-              color: #666666;
-            }
+
+    .tab-change{
+      width:1200px
+      height:50px
+      margin:0 auto
+      .tab-tips{
+        font-size: 16px;
+        color: #666666;
+        display inline-block
+        line-height: 50px
+      }
+      ul{
+        width: 1078px;
+        height: 50px;
+        background-color: #ffffff;
+        float right
+        li{
+          float left
+          width: 160px;
+          height: 50px;
+          line-height 50px
+          font-size: 16px;
+          color: #d91e01;
+          input{
+            width: 160px;
+            height: 50px;
+            position: relative;
+            z-index: 10;
+            cursor: pointer;
+            opacity 0.5
+          }
+          input:checked + .radio-box{
+            background-color #d91e01
+            color: #fff
+          }
+          .radio-box{
+            position: relative;
+            bottom: 70px;
+            text-align: center;
+            height: 50px;
           }
         }
       }
     }
+
+
     .search_type {
       width 1198px
       margin 0 auto

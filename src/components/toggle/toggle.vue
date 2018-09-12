@@ -1,5 +1,7 @@
 <template>
   <div class="toggle">
+    <!--<img src="./common/images/logo.png" alt="">-->
+    <div class="logo"></div>
     <ul>
       <li v-for="(item,index) of toggleParam" @click="toggle(index)" :class="{active:index===toggleIndex}">{{item}}</li>
     </ul>
@@ -12,7 +14,7 @@
     components: {},
     data() {
       return {
-        toggleParam: ["交易平台", "转让平台"],
+        toggleParam: ["搜索","交易平台", "转让平台"],
       }
     },
     props: {
@@ -45,6 +47,8 @@
             window.open('http://10.0.0.123:5001')
           }*/
           window.open('http://47.92.98.66:5001')
+        } else if (index === 2) {
+          window.open('http://www.baidu.com')
         }
       }
     },

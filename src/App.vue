@@ -1,54 +1,24 @@
 <template>
   <div id="app">
     <div class="head-wrap">
-      <div class="head">
-        <a href="/">欢迎来到 可信链 ！</a>
-        <div class="no_login" v-if="!isLogin">
-          <a href="/login">请登录</a>
-          <a href="/register">免费注册</a>
+      <my-toggle :toggleIndex="toggleIndex"></my-toggle>
+    </div>
+
+    <div class="search">
+      <div class="search-box">
+        <div class="search-input">
+          <input type="text" placeholder="请输入你想要的商品名称">
         </div>
-        <div class="login" v-if="isLogin" @mouseleave="leaveUl">
-          <div @click.capture="toggle">{{userName}} <img src="./down.png" alt=""></div>
-          <ul v-if="switchover">
-            <li><a href="/personalAssets" target="_blank">个人中心</a></li>
-            <li><a href="/securityCenter" target="_blank">安全中心</a></li>
-            <li @click="dropOut">退出</li>
-          </ul>
-        </div>
+        <button type="button">搜索</button>
+        <div style="clear: both"></div>
+        <span class="search-tips">百万积分大派送， 微信支付送等额可行积分！</span>
       </div>
     </div>
-    <div class="login-header" v-if="isShowLogin">
-      <div class="login-header-cont">
-        <router-link to="/home">
-          <img src="./common/images/login_header.png" alt="">
-        </router-link>
-      </div>
-    </div>
-    <div class="forget_psw_header" v-if="isShowRegister">
-      <section>
-        <router-link to="/home">
-          <img src="./common/images/register_logo.png" alt="">
-        </router-link>
-        <p>已有账号，立即
-          <router-link to="/login" class="to_login">登录</router-link>
-        </p>
-      </section>
-    </div>
-    <div class="forget_psw_header" v-if="isShowForgetPassword">
-      <section>
-        <router-link to="/home">
-          <img src="./common/images/forget_psw_logo.png" alt="">
-        </router-link>
-        <p>已有账号，立即
-          <router-link to="/login" class="to_login">登录</router-link>
-        </p>
-      </section>
-    </div>
-    <my-topSearch v-if="isShowTopSearch"></my-topSearch>
-    <my-toggle :toggleIndex="toggleIndex"></my-toggle>
+
     <div class="main_wrap">
       <router-view class="main" v-if="isRouterAlive"></router-view>
     </div>
+
     <div class="footer-wrap">
       <div class="footer">
         <div class="ft-box">
@@ -107,13 +77,10 @@
       return {
         isRouterAlive: true,
         switchover: false,
-        isLogin: false,
+
         userName: "",
         toggleIndex: 0,
-        isShowTopSearch: false,
-        isShowLogin: false,
-        isShowRegister: false,
-        isShowForgetPassword: false,
+
       }
     },
     beforeMount() {
@@ -193,8 +160,7 @@
   .head-wrap {
     width: 100%;
     min-width 1212px
-    height: 34px;
-    background-color: #e5e5e5;
+    height: auto;
     z-index: 9999;
     .head {
       box-sizing: border-box
@@ -235,8 +201,54 @@
         }
       }
     }
+
   }
-  
+
+  .search{
+    width: 100%;
+    height: 100px;
+    background-color: #ffffff;
+    box-shadow: -1px 3px 6px 1px rgba(0, 0, 0, 0.13);
+    margin-bottom: 22px;
+    .search-box{
+      width:1040px
+      margin:0 auto
+      margin-top: 18px;
+      .search-input{
+        width: 857px;
+        height: 45px;
+        border: solid 2px #d92104;
+        float left
+        font-size: 14px;
+        box-sizing:border-box;
+        input{
+          outline none
+          position: relative;
+          left: 16px;
+          top: 12px;
+          width: 820px;
+        }
+      }
+      button{
+        width: 173px;
+        height: 45px;
+        background-color: #d92104;
+        outline: none;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        color: #fff;
+        margin-left: 6px;
+      }
+      .search-tips{
+        font-size: 12px;
+        color: #d92104;
+        margin: 10px 0
+        display: inline-block;
+      }
+    }
+  }
+
   .login-header {
     width: 100%;
     height: 130px;
