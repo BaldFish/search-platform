@@ -371,7 +371,7 @@
             position: relative;
             z-index: 10;
             cursor: pointer;
-            opacity 0.5
+            opacity 0
           }
           input:checked + .radio-box{
             background-color #d91e01
