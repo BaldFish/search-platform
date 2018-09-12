@@ -11,6 +11,10 @@
           </div>
         </li>
       </ul>
+      <div class="more-search">
+        <img src="./images/more.png" alt="">
+        <span>更多搜索</span>
+      </div>
     </div>
 
     <div v-if="isMoreSearch" class="search_type">
@@ -35,6 +39,7 @@
       <div class="type_vin">
         <span class="type_span">里程：</span>
         <el-input class="vin_input" v-model="vinInput" placeholder="请输入里程" size="small" style="width:334px" @change="acquireSearchReportList"></el-input>
+        <span class="type_span" style="text-align: left;margin-left: 10px;">公里</span>
       </div>
       <div class="type_vin">
         <span class="type_span">诊断设备号：</span>
@@ -75,40 +80,59 @@
       </div>
     </div>
 
+    <div class="buy-all">
+      <span class="buy-tips">
+        搜索出<span>10000</span>条，总共<span>15000</span>条；一次性购买<span>1000</span>条以上可享优惠
+      </span>
+      <label>最新</label>
+      <template>
+        <el-select v-model="numbervalue" size="small" style="margin-right: 4px;width: 98px;" placeholder="请选择">
+          <el-option
+            v-for="item in number"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </template>
+      <button type="button" class="buy-btn">一键认购</button>
+    </div>
 
-
-    <div class="report_list">
-      <div class="fr_report" v-for="(item,index) of searchReportList" :key="item.id">
-        <h4><a href="/reportDetails" @click="getReportDetails(item.id)" v-html="item.assetname"></a></h4>
+    <div class="case_list">
+      <div class="fr_case" v-for="(item,index) of searchReportList" :key="item.id">
+        <h4><a href="/caseDetails" @click="getReportDetails(item.id)" v-html="item.assetname"></a></h4>
         <div class="attestation">
           <span class="merchant" v-if="item.authtype==='认证商家'">{{item.authtype}}</span>
           <span class="person" v-if="item.authtype==='认证个人'">{{item.authtype}}</span>
           <span class="trust" v-if="item.creditlevel!=='未认证'">{{item.creditlevel}}</span>
         </div>
         <div class="putaway">
-          <a class="time" href="/reportDetails" @click="getReportDetails(item.id)"><span>报告生成时间：</span>{{item.generate_time}}</a>
-          <a class="data" href="/reportDetails" @click="getReportDetails(item.id)"><span>数据来源：</span>{{item.resource}}</a>
+          <a class="time" href="/caseDetails" @click="getCaseDetails(item.id)"><span>上架时间：</span>{{item.sell_at}}</a>
+          <a class="equity" href="/caseDetails" @click="getCaseDetails(item.id)"><span>权益：</span>{{item.sell_type}}</a>
         </div>
-        <div class="putaway">
-          <a class="vin" href="/reportDetails" @click="getReportDetails(item.id)"><span>VIN码：</span>{{item.vin}}</a>
-          <a class="breakdown" href="/reportDetails" @click="getReportDetails(item.id)"><span>故障码个数：</span>{{item.fault_n}}个</a>
-          <a class="equity" href="/reportDetails" @click="getReportDetails(item.id)"><span>权益：</span>{{item.sell_type}}</a>
+        <div class="belong">
+          <a href="/caseDetails" @click="getCaseDetails(item.id)">
+            <span>所属人：</span>{{item.assetowner}}
+          </a>
         </div>
-        <!--<div class="fault">
+        <div class="fault">
           <p>
             <a href="/caseDetails" @click="getCaseDetails(item.id)">
               <span>故障现象：</span>{{item.assetcontent}}
             </a>
           </p>
         </div>
-        <div :class="item.shopcart_id?'like':'dislike'" @click="toggleLike(item.id)">收藏</div>-->
+        <!--<div :class="item.shopcart_id?'like':'dislike'" @click="toggleLike(item.id)">收藏</div>-->
         <div class="price_box">
-          <a href="/reportDetails" @click="getReportDetails(item.id)"><p class="price">{{item.price}}</p></a>
-          <a href="/reportDetails" @click="getReportDetails(item.id)"><p class="tracing">可信溯源</p></a>
-          <a href="javascript:void(0)" @click="buy(item.id)"><p class="buy">一键购买</p></a>
+          <a href="/caseDetails" @click="getCaseDetails(item.id)"><p class="price">{{item.price}}</p></a>
+         <!-- <a href="/caseSource" @click="getCaseSource(item.id)"><p class="tracing">可信溯源</p></a>
+          <a href="javascript:void(0)" @click="buy(item.id)"><p class="buy">一键购买</p></a>-->
         </div>
+        <div class="bar"></div>
       </div>
     </div>
+
+
     <div class="clearfix paging">
       <el-pagination class="my_paging"
                      layout="prev, pager, next"
@@ -173,6 +197,17 @@
         value1: '',
         value2: '',
         value3: '',
+        number: [{
+          value: '选项1',
+          label: '1000'
+        }, {
+          value: '选项2',
+          label: '2000'
+        }, {
+          value: '选项3',
+          label: '3000'
+        }],
+        numbervalue: '',
       }
     },
     mounted() {
@@ -385,6 +420,49 @@
           }
         }
       }
+      .more-search{
+        font-size: 13px;
+        color: #666;
+        position: relative;
+        bottom: 31px;
+        left: 1100px;
+        cursor: pointer;
+        width: 100px;
+        img{
+          margin-right 6px
+        }
+      }
+    }
+    .buy-all{
+      width 1200px
+      margin:0 auto
+      margin-top: 20px;
+      padding-left: 684px;
+      .buy-tips{
+        font-size: 13px;
+        color: #666666;
+        margin-right 48px
+        span{
+          color: #d91e01;
+        }
+      }
+      label{
+        font-size: 14px;
+        color: #666666;
+        margin-right 8px
+      }
+      .buy-btn{
+        outline:none
+        width: 97px;
+        height: 30px;
+        background-color: #d92104;
+        border none
+        cursor pointer
+        font-size: 14px;
+        color: #ffffff;
+        position: relative;
+        top: 1px;
+      }
     }
 
 
@@ -396,11 +474,12 @@
       border: solid 1px #dcdcdc;
       margin-top 20px
     }
-    .report_list {
+
+    .case_list {
       width 1212px
       margin 0 auto
-      padding-top 30px
-      .fr_report {
+      padding-top: 12px
+      .fr_case {
         margin 0 auto
         margin-bottom 18px
         position relative
@@ -447,16 +526,13 @@
           }
         }
         .putaway {
-          padding-bottom 20px
-          font-size 0
           a {
-            display inline-block
             padding-left 26px
             padding-top 2px
             padding-bottom 2px
             color #666666;
             font-size 14px
-            margin-right 34px
+            margin-right 43px
             background-repeat: no-repeat;
             background-position: top left;
             line-height 22px
@@ -467,25 +543,13 @@
           }
           .time {
             background-image: url('./images/time.png');
-            width 250px
-          }
-          .data {
-            background-image: url('./images/data.png');
-          }
-          .vin {
-            background-image: url('./images/vin.png');
-            width 250px
-          }
-          .breakdown {
-            background-image: url('./images/breakdown.png');
-            width 140px
           }
           .equity {
             background-image: url('./images/Profit.png');
           }
         }
-        .belong {
-          a {
+        .belong{
+          a{
             display block
             line-height 22px
             padding-left 26px
@@ -494,7 +558,7 @@
             background-position: top left;
             color #666666;
             font-size 14px;
-            span {
+            span{
               color #222222;
               font-size 16px
             }
@@ -583,6 +647,17 @@
             text-align center
           }
         }
+        .bar{
+          width 10px
+          height 100%
+          background-color #ff3b0b
+          position absolute
+          top 0
+          right 0
+        }
+      }
+      .fr_case:hover{
+        box-shadow: 2px 1px 17px 1px rgba(98, 98, 98, 0.28);
       }
     }
     .fr_report:hover{

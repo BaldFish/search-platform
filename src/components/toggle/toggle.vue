@@ -1,7 +1,6 @@
 <template>
   <div class="toggle">
-    <!--<img src="./common/images/logo.png" alt="">-->
-    <div class="logo"></div>
+    <img src="@/common/images/logo.png" alt="" class="logo" >
     <ul>
       <li v-for="(item,index) of toggleParam" @click="toggle(index)" :class="{active:index===toggleIndex}">{{item}}</li>
     </ul>
@@ -46,9 +45,9 @@
           }else{
             window.open('http://10.0.0.123:5001')
           }*/
-          window.open('http://47.92.98.66:5001')
+          window.open('http://47.92.98.66:5000')
         } else if (index === 2) {
-          window.open('http://www.baidu.com')
+          window.open('http://47.92.98.66:5001')
         }
       }
     },
@@ -60,11 +59,16 @@
     width 100%
     border 1px solid #d91e01
     background-color #d91e01
+    .logo{
+      position: absolute;
+      top: 7px;
+      left: 160px;
+    }
     ul {
       width 1212px
       margin 0 auto
       font-size 0
-      padding-left 34px
+      padding-left: 365px;
       li {
         display inline-block
         margin-right 20px

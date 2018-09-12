@@ -16,7 +16,153 @@
     </div>
 
     <div class="main_wrap">
-      <router-view class="main" v-if="isRouterAlive"></router-view>
+
+      <div class="searchReport">
+
+        <div class="tab-change">
+          <span class="tab-tips">最新上架资产：</span>
+          <ul>
+            <li v-for="(item,index) of searchField">
+              <input type="radio" name="radio"  @click="searchToggle(index)">
+              <div class="radio-box">
+                <p>{{item}}</p>
+              </div>
+            </li>
+          </ul>
+          <div class="more-search">
+            <img src="@/components/searchReport/images/more.png" alt="">
+            <span>更多搜索</span>
+          </div>
+        </div>
+
+        <div v-if="isMoreSearch" class="search_type">
+          <div class="type_territory">
+            <span class="type_span">省市：</span>
+            <area-select class="territory_input" v-model="territoryInput" :data="pca" type="text" @change="acquireSearchReportList"></area-select>
+          </div>
+          <div class="type_date">
+            <span class="type_span">时间：</span>
+            <el-date-picker class="date_input" v-model="dateInput" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"
+                            format="yyyy-MM-dd" default-value="2018-01-01" size="small" @change="acquireSearchReportList">
+            </el-date-picker>
+          </div>
+          <div class="type_vin">
+            <span class="type_span">VIN码：</span>
+            <el-input class="vin_input" v-model="vinInput" placeholder="请输入VIN" size="small" style="width:334px" @change="acquireSearchReportList"></el-input>
+          </div>
+          <div class="type_vin">
+            <span class="type_span">技师号：</span>
+            <el-input class="vin_input" v-model="vinInput" placeholder="请输入技师号" size="small" style="width:334px" @change="acquireSearchReportList"></el-input>
+          </div>
+          <div class="type_vin">
+            <span class="type_span">里程：</span>
+            <el-input class="vin_input" v-model="vinInput" placeholder="请输入里程" size="small" style="width:334px" @change="acquireSearchReportList"></el-input>
+            <span class="type_span" style="text-align: left;margin-left: 10px;">公里</span>
+          </div>
+          <div class="type_vin">
+            <span class="type_span">诊断设备号：</span>
+            <el-input class="vin_input" v-model="vinInput" placeholder="请输入诊断设备号" size="small" style="width:334px" @change="acquireSearchReportList"></el-input>
+          </div>
+          <div class="type_vin">
+            <span class="type_span">高级选项：</span>
+            <template>
+              <el-select v-model="value1" size="small" style="margin-right: 25px" placeholder="车系品牌">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </template>
+            <template>
+              <el-select v-model="value2" size="small" style="margin-right: 25px" placeholder="车年款">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </template>
+            <template>
+              <el-select v-model="value3" size="small" placeholder="车厂">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </template>
+          </div>
+        </div>
+
+        <div class="buy-all">
+      <span class="buy-tips">
+        搜索出<span>10000</span>条，总共<span>15000</span>条；一次性购买<span>1000</span>条以上可享优惠
+      </span>
+          <label>最新</label>
+          <template>
+            <el-select v-model="numbervalue" size="small" style="margin-right: 4px;width: 98px;" placeholder="请选择">
+              <el-option
+                v-for="item in number"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </template>
+          <button type="button" class="buy-btn">一键认购</button>
+        </div>
+
+        <div class="case_list">
+          <div class="fr_case" v-for="(item,index) of searchReportList" :key="item.id">
+            <h4><a href="/caseDetails" @click="getReportDetails(item.id)" v-html="item.assetname"></a></h4>
+            <div class="attestation">
+              <span class="merchant" v-if="item.authtype==='认证商家'">{{item.authtype}}</span>
+              <span class="person" v-if="item.authtype==='认证个人'">{{item.authtype}}</span>
+              <span class="trust" v-if="item.creditlevel!=='未认证'">{{item.creditlevel}}</span>
+            </div>
+            <div class="putaway">
+              <a class="time" href="/caseDetails" @click="getCaseDetails(item.id)"><span>上架时间：</span>{{item.sell_at}}</a>
+              <a class="equity" href="/caseDetails" @click="getCaseDetails(item.id)"><span>权益：</span>{{item.sell_type}}</a>
+            </div>
+            <div class="belong">
+              <a href="/caseDetails" @click="getCaseDetails(item.id)">
+                <span>所属人：</span>{{item.assetowner}}
+              </a>
+            </div>
+            <div class="fault">
+              <p>
+                <a href="/caseDetails" @click="getCaseDetails(item.id)">
+                  <span>故障现象：</span>{{item.assetcontent}}
+                </a>
+              </p>
+            </div>
+            <!--<div :class="item.shopcart_id?'like':'dislike'" @click="toggleLike(item.id)">收藏</div>-->
+            <div class="price_box">
+              <a href="/caseDetails" @click="getCaseDetails(item.id)"><p class="price">{{item.price}}</p></a>
+              <!-- <a href="/caseSource" @click="getCaseSource(item.id)"><p class="tracing">可信溯源</p></a>
+               <a href="javascript:void(0)" @click="buy(item.id)"><p class="buy">一键购买</p></a>-->
+            </div>
+            <div class="bar"></div>
+          </div>
+        </div>
+
+
+        <div class="clearfix paging">
+          <el-pagination class="my_paging"
+                         layout="prev, pager, next"
+                         :background=true
+                         :total=total
+                         :page-size=reportLimit
+                         :current-page.sync=reportPage
+                         @current-change="handleCurrentChange">
+          </el-pagination>
+        </div>
+      </div>
+  <!--    <router-view class="main"></router-view>-->
     </div>
 
     <div class="footer-wrap">
@@ -58,95 +204,235 @@
 
 <script>
   import "@/common/stylus/index.styl";
+  import "@/common/stylus/paging.styl";
+  import axios from "axios";
+  import _ from "lodash";
   import {baseURL, cardURL} from '@/common/js/public.js';
   import myTopSearch from "@/components/topSearch/topSearch"
   import myToggle from "@/components/toggle/toggle"
-  
+  import utils from "@/common/js/utils.js";
+  import {pca, pcaa} from 'area-data';
+
+  const querystring = require('querystring');
+
   export default {
     name: 'App',
     components: {
       myTopSearch,
       myToggle,
     },
-    provide() {
-      return {
-        reload: this.reload
-      }
-    },
     data() {
       return {
-        isRouterAlive: true,
-        switchover: false,
+        territoryInput: [],
+        dateInput: ["", ""],
+        vinInput: "",
+        pca: pca,
+        reportPage: 1,
+        reportLimit: 10,
+        total: 10,
+        searchReportList: [],
+        userId: "",
+        token: "",
+        apiKey: "",
+        assetId: "",
+        id: "",
 
-        userName: "",
-        toggleIndex: 0,
-
+        toggleIndex:0,
+        isMoreSearch:false,
+        searchField: ["诊断报告", "维修案例"],
+        options: [{
+          value: '选项1',
+          label: '一汽大众'
+        }, {
+          value: '选项2',
+          label: '本田'
+        }, {
+          value: '选项3',
+          label: '宝马'
+        }, {
+          value: '选项4',
+          label: '广汽传祺'
+        }, {
+          value: '选项5',
+          label: '雪佛莱'
+        }],
+        value1: '',
+        value2: '',
+        value3: '',
+        number: [{
+          value: '选项1',
+          label: '1000'
+        }, {
+          value: '选项2',
+          label: '2000'
+        }, {
+          value: '选项3',
+          label: '3000'
+        }],
+        numbervalue: '',
       }
     },
-    beforeMount() {
+    mounted() {
       if (JSON.parse(sessionStorage.getItem("loginInfo"))) {
-        this.isLogin = true;
-        this.userName = JSON.parse(sessionStorage.getItem("userName")).phone
-      } else {
-        this.isLogin = false
+        this.userId = JSON.parse(sessionStorage.getItem("loginInfo")).user_id;
+        this.token = JSON.parse(sessionStorage.getItem("loginInfo")).token;
       }
-      this.changTop()
+      this.acquireSearchReportList();
     },
-    beforeUpdate() {
-      if (JSON.parse(sessionStorage.getItem("loginInfo"))) {
-        this.isLogin = true;
-        this.userName = JSON.parse(sessionStorage.getItem("userName")).phone
-      } else {
-        this.isLogin = false
+    computed: {
+      searchValue: function () {
+        return this.$store.state.searchValue
+      },
+      searchInput: function () {
+        return this.$store.state.searchInput
+      },
+      newTerritoryInput:function () {
+        if (this.territoryInput.length !== 0) {
+          return this.territoryInput
+        }else{
+          return ["",""]
+        }
       }
-      this.changTop()
     },
-    computed: {},
-    watch: {},
+    watch: {
+      searchInput: function () {
+        this.acquireSearchReportList();
+      }
+    },
     methods: {
-      changTop() {
-        if (this.$route.path == "/login") {
-          this.isShowTopSearch = false;
-          this.isShowLogin = true;
-          this.isShowRegister = false;
-          this.isShowForgetPassword = false;
-        } else if (this.$route.path == "/register") {
-          this.isShowTopSearch = false;
-          this.isShowLogin = false;
-          this.isShowRegister = true;
-          this.isShowForgetPassword = false;
-        } else if (this.$route.path == "/forgetPassword") {
-          this.isShowTopSearch = false;
-          this.isShowLogin = false;
-          this.isShowRegister = false;
-          this.isShowForgetPassword = true;
+      searchToggle(index){
+        console.log(index)
+        if (index === 0){
+          this.isMoreSearch = true
         } else {
-          this.isShowTopSearch = true;
-          this.isShowLogin = false;
-          this.isShowRegister = false;
-          this.isShowForgetPassword = false;
+          this.isMoreSearch = false
         }
       },
-      reload() {
-        this.isRouterAlive = false;
-        this.$nextTick(() => {
-          this.isRouterAlive = true
+      open() {
+        this.$confirm('此操作需要先登录, 是否登录?', '提示', {
+          confirmButtonText: '是',
+          cancelButtonText: '否',
+          type: 'warning',
+          center: true
+        }).then(() => {
+          this.$router.push("/login")
+        }).catch(() => {
+        });
+      },
+      acquireSearchReportList() {
+        axios({
+          method: "GET",
+          url:
+            `${baseURL}/v1/asset/diagnoseReport/search?key=${this.searchInput}&page=${this.reportPage}&limit=${this.reportLimit}&province=${this.newTerritoryInput[0]}&city=${this.newTerritoryInput[1]}&vin=${this.vinInput}&start_time=${this.dateInput[0]}&end_time=${this.dateInput[1]}`,
+          headers: {
+            "Content-Type": "application/json",
+          }
+        }).then((res) => {
+          if (res.data.data === null) {
+            this.searchReportList=[]
+            return
+          } else {
+            this.total = res.data.count;
+            for (let v of res.data.data) {
+              v.generate_time = utils.formatDate(new Date(v.generate_time), "yyyy-MM-dd hh:mm:ss");
+              v.sell_at = utils.formatDate(new Date(v.sell_at), "yyyy-MM-dd hh:mm:ss");
+              v.assetname = utils.searchHighlight(v.assetname, this.searchInput, "color", "#c6351e");
+            }
+            this.searchReportList = res.data.data;
+          }
+        }).catch((err) => {
+          console.log(err);
         })
       },
-      dropOut(command) {
-        sessionStorage.removeItem('loginInfo');
-        sessionStorage.removeItem('userInfo');
-        sessionStorage.removeItem('userName');
-        this.switchover = false;
-        location.reload()
+      getReportDetails(val) {
+        this.$store.commit("changeReportDetails", _.find(this.searchReportList, function (o) {
+          return o.id === val
+        }));
       },
-      toggle() {
-        this.switchover = !this.switchover
+      handleCurrentChange(val) {
+        this.reportPage = val;
+        this.acquireSearchReportList()
       },
-      leaveUl() {
-        this.switchover = false
+      buy(val) {
+        if (JSON.parse(sessionStorage.getItem("loginInfo"))) {
+          let buyInfoObj = _.find(this.searchReportList, function (o) {
+            return o.id === val
+          });
+          this.apiKey = buyInfoObj.apikey;
+          this.assetId = buyInfoObj.assetid;
+          let data = {};
+          data.nums = 1;
+          axios({
+            method: "POST",
+            url: `${baseURL}/v1/order/${this.userId}/${this.apiKey}/${this.assetId}`,
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+              "X-Access-Token": this.token,
+            },
+            data: querystring.stringify(data),
+          }).then((res) => {
+            buyInfoObj = res.data;
+            this.getBuy(buyInfoObj);
+            this.$router.push("/checkOrder")
+          }).catch((err) => {
+            console.log(err);
+          })
+        } else {
+          this.open()
+        }
       },
-    }
+      getBuy(val) {
+        this.$store.commit("changeBuy", val);
+      },
+      toggleLike(val) {
+        if (sessionStorage.getItem("loginInfo")) {
+          let likeInfo = _.find(this.searchReportList, function (o) {
+            return o.id === val
+          });
+          this.apiKey = likeInfo.apikey;
+          this.assetId = likeInfo.assetid;
+          if (likeInfo.shopcart_id === "") {
+            axios({
+              method: "POST",
+              url: `${baseURL}/v1/shopcart/${this.userId}/${this.apiKey}/${this.assetId}`,
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-Access-Token": this.token
+              }
+            }).then((res) => {
+              this.id = res.data._id;
+              likeInfo.shopcart_id = this.id;
+              this.addCollection()
+            }).catch((err) => {
+              console.log(err);
+            });
+          } else if (likeInfo.shopcart_id !== "") {
+            this.id = likeInfo.shopcart_id;
+            axios({
+              method: "DELETE",
+              url: `${baseURL}/v1/shopcart/${this.userId}/${this.id}`,
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-Access-Token": this.token
+              }
+            }).then((res) => {
+              likeInfo.shopcart_id = "";
+              this.subtractCollection()
+            }).catch((err) => {
+              console.log(err);
+            });
+          }
+        } else {
+          this.open()
+        }
+      },
+      addCollection() {
+        this.$store.commit("addCollection")
+      },
+      subtractCollection() {
+        this.$store.commit("subtractCollection")
+      },
+    },
   }
 </script>
 
@@ -374,4 +660,339 @@
       }
     }
   }
+</style>
+
+<style scoped lang="stylus">
+  .searchReport {
+
+    .tab-change{
+      width:1200px
+      height:50px
+      margin:0 auto
+      .tab-tips{
+        font-size: 16px;
+        color: #666666;
+        display inline-block
+        line-height: 50px
+      }
+      ul{
+        width: 1078px;
+        height: 50px;
+        background-color: #ffffff;
+        float right
+        li{
+          float left
+          width: 160px;
+          height: 50px;
+          line-height 50px
+          font-size: 16px;
+          color: #d91e01;
+          input{
+            width: 160px;
+            height: 50px;
+            position: relative;
+            z-index: 10;
+            cursor: pointer;
+            opacity 0
+          }
+          input:checked + .radio-box{
+            background-color #d91e01
+            color: #fff
+          }
+          .radio-box{
+            position: relative;
+            bottom: 70px;
+            text-align: center;
+            height: 50px;
+          }
+        }
+      }
+      .more-search{
+        font-size: 13px;
+        color: #666;
+        position: relative;
+        bottom: 31px;
+        left: 1100px;
+        cursor: pointer;
+        width: 100px;
+        img{
+          margin-right 6px
+        }
+      }
+    }
+    .buy-all{
+      width 1200px
+      margin:0 auto
+      margin-top: 20px;
+      padding-left: 684px;
+      .buy-tips{
+        font-size: 13px;
+        color: #666666;
+        margin-right 48px
+        span{
+          color: #d91e01;
+        }
+      }
+      label{
+        font-size: 14px;
+        color: #666666;
+        margin-right 8px
+      }
+      .buy-btn{
+        outline:none
+        width: 97px;
+        height: 30px;
+        background-color: #d92104;
+        border none
+        cursor pointer
+        font-size: 14px;
+        color: #ffffff;
+        position: relative;
+        top: 1px;
+      }
+    }
+
+
+    .search_type {
+      width 1198px
+      margin 0 auto
+      background-color: #fafafa;
+      box-shadow: 0px 0px 13px 1px rgba(2, 2, 2, 0.16);
+      border: solid 1px #dcdcdc;
+      margin-top 20px
+    }
+
+    .case_list {
+      width 1212px
+      margin 0 auto
+      padding-top: 12px
+      .fr_case {
+        margin 0 auto
+        margin-bottom 18px
+        position relative
+        box-sizing border-box
+        width 1198px
+        height 220px
+        background-color rgba(255, 255, 255, 0.8)
+        /*opacity: 0.8;*/
+        padding 15px 20px
+        h4 {
+          width 1060px
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          a {
+            color: #222222;
+            font-size: 20px;
+          }
+        }
+        .attestation {
+          width 800px
+          height 74px
+          font-size 0px
+          span {
+            text-align center
+            color #ffffff
+            font-size 14px
+            display inline-block
+            width 70px
+            height 30px
+            line-height 30px
+            margin-right 14px
+            margin-top 14px
+            margin-bottom 30px
+          }
+          .trust {
+            background-color #99c7ff
+          }
+          .person {
+            background-color #ffdd99
+          }
+          .merchant {
+            background-color #ffa799
+          }
+        }
+        .putaway {
+          a {
+            padding-left 26px
+            padding-top 2px
+            padding-bottom 2px
+            color #666666;
+            font-size 14px
+            margin-right 43px
+            background-repeat: no-repeat;
+            background-position: top left;
+            line-height 22px
+            span {
+              color #222222;
+              font-size 16px
+            }
+          }
+          .time {
+            background-image: url('./components/searchReport/images/time.png');
+          }
+          .equity {
+            background-image: url('./components/searchReport/images/Profit.png');
+          }
+        }
+        .belong{
+          a{
+            display block
+            line-height 22px
+            padding-left 26px
+            background-image: url('./components/searchReport/images/person.png');
+            background-repeat: no-repeat;
+            background-position: top left;
+            color #666666;
+            font-size 14px;
+            span{
+              color #222222;
+              font-size 16px
+            }
+          }
+        }
+        .fault {
+          p {
+            padding-top 4px
+            width 562px
+            height 54px
+            line-height 18px
+            a {
+              color #666666;
+              font-size 14px
+              display block
+              display: -webkit-box;
+              -webkit-box-orient: vertical;
+              -webkit-line-clamp: 3;
+              overflow: hidden;
+              span:first-child {
+                font-size 16px
+                color #222222;
+              }
+            }
+          }
+        }
+        .dislike {
+          position absolute
+          top 15px
+          right 30px
+          height 20px
+          line-height 20px
+          color: #979797;
+          cursor pointer
+          padding-left 26px
+          background-image: url('./components/searchReport/images/dislike.png');
+          background-repeat: no-repeat;
+          background-position: top left;
+        }
+        .like {
+          position absolute
+          top 15px
+          right 30px
+          height 20px
+          line-height 20px
+          color: #c6351e;
+          cursor pointer
+          padding-left 26px
+          background-image: url('./components/searchReport/images/like.png');
+          background-repeat: no-repeat;
+          background-position: top left;
+        }
+        .price_box {
+          position absolute
+          top 78px
+          left 1000px
+          .price {
+            min-width 18px
+            height 24px
+            font-size: 24px;
+            color: #c6351e;
+            background-image: url('./components/searchReport/images/currency.png');
+            background-repeat: no-repeat;
+            background-position: top left;
+            padding-left 26px
+            margin-bottom 8px
+          }
+          .tracing {
+            color: #f3b43f;
+            font-size 14px
+            background-image: url('./components/searchReport/images/credible.png');
+            background-repeat: no-repeat;
+            background-position: top left;
+            padding-left 26px
+            height 18px
+            line-height 18px
+            margin-bottom 24px
+          }
+          .buy {
+            width 114px
+            height 36px
+            background-color #c6351e
+            color #ffffff
+            font-size 18px
+            line-height 36px
+            text-align center
+          }
+        }
+        .bar{
+          width 10px
+          height 100%
+          background-color #ff3b0b
+          position absolute
+          top 0
+          right 0
+        }
+      }
+      .fr_case:hover{
+        box-shadow: 2px 1px 17px 1px rgba(98, 98, 98, 0.28);
+      }
+    }
+    .fr_report:hover{
+      box-shadow: 0px 0px 13px 1px rgba(218, 44, 89, 0.4);
+    }
+  }
+</style>
+<style lang="stylus">
+  .search_type {
+    font-size 0
+    .type_span {
+      box-sizing border-box
+      display inline-block
+      font-size 14px
+      padding 10px 0
+      text-align right
+      width 100px
+      color: #666666;
+    }
+    .type_territory {
+      margin 10px 0
+      .area-select-wrap {
+        display: inline-block
+        vertical-align top
+        .area-select:nth-child(1) {
+          margin-left 0
+        }
+      }
+    }
+    .type_date {
+      margin 10px 0
+      .el-range-editor--small.el-input__inner {
+        height: 32px;
+        width 334px
+      }
+      .el-range-editor.is-active, .el-range-editor.is-active:hover {
+        border-color: #a1a4ad;
+      }
+    }
+    .type_vin {
+      margin 10px 0
+      .el-input {
+        vertical-align top
+        .el-input__inner:focus {
+          border-color #a1a4ad
+        }
+      }
+    }
+  }
+
 </style>
