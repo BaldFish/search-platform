@@ -5,13 +5,15 @@
     </div>
 
     <div class="search">
-      <div class="search-box">
-        <div class="search-input">
-          <input type="text" placeholder="请输入你想要的商品名称">
+      <div class="search-container">
+        <div class="search-box">
+          <div class="search-input">
+            <input type="text" placeholder="请输入你想要的商品名称">
+          </div>
+          <button type="button">搜索</button>
+          <div style="clear: both"></div>
+          <span class="search-tips">百万积分大派送， 微信支付送等额可信积分！</span>
         </div>
-        <button type="button">搜索</button>
-        <div style="clear: both"></div>
-        <span class="search-tips">百万积分大派送， 微信支付送等额可行积分！</span>
       </div>
     </div>
 
@@ -29,10 +31,10 @@
               </div>
             </li>
           </ul>
-          <div class="more-search">
+        <!--  <div class="more-search">
             <img src="@/components/searchReport/images/more.png" alt="">
             <span>更多搜索</span>
-          </div>
+          </div>-->
         </div>
 
         <div v-if="isMoreSearch" class="search_type">
@@ -99,9 +101,9 @@
         </div>
 
         <div class="buy-all">
-      <span class="buy-tips">
-        搜索出<span>10000</span>条，总共<span>15000</span>条；一次性购买<span>1000</span>条以上可享优惠
-      </span>
+          <span class="buy-tips">
+            搜索出<span>10000</span>条，总共<span>15000</span>条；一次性购买<span>1000</span>条以上可享优惠
+          </span>
           <label>最新</label>
           <template>
             <el-select v-model="numbervalue" size="small" style="margin-right: 4px;width: 98px;" placeholder="请选择">
@@ -124,22 +126,38 @@
               <span class="person" v-if="item.authtype==='认证个人'">{{item.authtype}}</span>
               <span class="trust" v-if="item.creditlevel!=='未认证'">{{item.creditlevel}}</span>
             </div>
-            <div class="putaway">
-              <a class="time" href="/caseDetails" @click="getCaseDetails(item.id)"><span>上架时间：</span>{{item.sell_at}}</a>
-              <a class="equity" href="/caseDetails" @click="getCaseDetails(item.id)"><span>权益：</span>{{item.sell_type}}</a>
-            </div>
-            <div class="belong">
-              <a href="/caseDetails" @click="getCaseDetails(item.id)">
-                <span>所属人：</span>{{item.assetowner}}
-              </a>
-            </div>
-            <div class="fault">
-              <p>
+
+            <div v-if="!isMoreSearch">
+              <div class="putaway">
+                <a class="time" href="/caseDetails" @click="getCaseDetails(item.id)"><span>上架时间：</span>{{item.sell_at}}</a>
+                <a class="equity" href="/caseDetails" @click="getCaseDetails(item.id)"><span>权益：</span>{{item.sell_type}}</a>
+              </div>
+              <div class="belong">
                 <a href="/caseDetails" @click="getCaseDetails(item.id)">
-                  <span>故障现象：</span>{{item.assetcontent}}
+                  <span>所属人：</span>{{item.assetowner}}
                 </a>
-              </p>
+              </div>
+              <div class="fault">
+                <p>
+                  <a href="/caseDetails" @click="getCaseDetails(item.id)">
+                    <span>故障现象：</span>{{item.assetcontent}}
+                  </a>
+                </p>
+              </div>
             </div>
+
+            <div v-if="isMoreSearch">
+              <div class="putaway putaway-report">
+                <a class="time" href="/reportDetails" @click="getReportDetails(item.id)"><span>报告生成时间：</span>{{item.generate_time}}</a>
+                <a class="data" href="/reportDetails" @click="getReportDetails(item.id)"><span>数据来源：</span>{{item.resource}}</a>
+              </div>
+              <div class="putaway putaway-report">
+                <a class="vin" href="/reportDetails" @click="getReportDetails(item.id)"><span>VIN码：</span>{{item.vin}}</a>
+                <a class="breakdown" href="/reportDetails" @click="getReportDetails(item.id)"><span>故障码个数：</span>{{item.fault_n}}个</a>
+                <a class="equity" href="/reportDetails" @click="getReportDetails(item.id)"><span>权益：</span>{{item.sell_type}}</a>
+              </div>
+            </div>
+
             <!--<div :class="item.shopcart_id?'like':'dislike'" @click="toggleLike(item.id)">收藏</div>-->
             <div class="price_box">
               <a href="/caseDetails" @click="getCaseDetails(item.id)"><p class="price">{{item.price}}</p></a>
@@ -496,41 +514,45 @@
     background-color: #ffffff;
     box-shadow: -1px 3px 6px 1px rgba(0, 0, 0, 0.13);
     margin-bottom: 22px;
-    .search-box{
-      width:1040px
+    .search-container{
+      width:1200px
       margin:0 auto
-      margin-top: 18px;
-      .search-input{
-        width: 857px;
-        height: 45px;
-        border: solid 2px #d92104;
-        float left
-        font-size: 14px;
-        box-sizing:border-box;
-        input{
-          outline none
-          position: relative;
-          left: 16px;
-          top: 12px;
-          width: 820px;
+      .search-box{
+        width:1040px
+        margin:0 auto
+        margin-top: 18px;
+        .search-input{
+          width: 857px;
+          height: 45px;
+          border: solid 2px #d92104;
+          float left
+          font-size: 14px;
+          box-sizing:border-box;
+          input{
+            outline none
+            position: relative;
+            left: 16px;
+            top: 12px;
+            width: 820px;
+          }
         }
-      }
-      button{
-        width: 173px;
-        height: 45px;
-        background-color: #d92104;
-        outline: none;
-        border: none;
-        cursor: pointer;
-        font-size: 16px;
-        color: #fff;
-        margin-left: 6px;
-      }
-      .search-tips{
-        font-size: 12px;
-        color: #d92104;
-        margin: 10px 0
-        display: inline-block;
+        button{
+          width: 173px;
+          height: 45px;
+          background-color: #d92104;
+          outline: none;
+          border: none;
+          cursor: pointer;
+          font-size: 16px;
+          color: #fff;
+          margin-left: 6px;
+        }
+        .search-tips{
+          font-size: 12px;
+          color: #d92104;
+          margin: 10px 0
+          display: inline-block;
+        }
       }
     }
   }
@@ -724,11 +746,11 @@
       width 1200px
       margin:0 auto
       margin-top: 20px;
-      padding-left: 684px;
       .buy-tips{
         font-size: 13px;
         color: #666666;
         margin-right 48px
+        margin-left: 525px;
         span{
           color: #d91e01;
         }
@@ -831,9 +853,24 @@
           .time {
             background-image: url('./components/searchReport/images/time.png');
           }
+          .data {
+            background-image: url('./components/searchReport/images/data.png');
+          }
+          .vin {
+            background-image: url('./components/searchReport/images/vin.png');
+            width 250px
+            display: inline-block;
+          }
+          .breakdown {
+            background-image: url('./components/searchReport/images/breakdown.png');
+            width 140px
+          }
           .equity {
             background-image: url('./components/searchReport/images/Profit.png');
           }
+        }
+        .putaway-report{
+          margin-bottom 20px
         }
         .belong{
           a{

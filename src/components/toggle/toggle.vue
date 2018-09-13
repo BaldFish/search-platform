@@ -1,9 +1,14 @@
 <template>
   <div class="toggle">
-    <img src="@/common/images/logo.png" alt="" class="logo" >
-    <ul>
-      <li v-for="(item,index) of toggleParam" @click="toggle(index)" :class="{active:index===toggleIndex}">{{item}}</li>
-    </ul>
+    <div class="toggle-box">
+      <div class="logo">
+        <img src="@/common/images/logo.jpg" alt="">
+        <span>Trusted Assets Blockchain</span>
+      </div>
+      <ul>
+        <li v-for="(item,index) of toggleParam" @click="toggle(index)" :class="{active:index===toggleIndex}">{{item}}</li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -59,34 +64,43 @@
     width 100%
     border 1px solid #d91e01
     background-color #d91e01
-    .logo{
-      position: absolute;
-      top: 7px;
-      left: 160px;
-    }
-    ul {
-      width 1212px
-      margin 0 auto
-      font-size 0
-      padding-left: 365px;
-      li {
-        display inline-block
-        margin-right 20px
-        text-align center
-        width 106px
-        height 48px
-        line-height 48px
-        font-size: 16px;
-        color: #f3f3f3;
-        cursor pointer
+    .toggle-box{
+      width:1200px
+      margin:0 auto
+      .logo{
+        width: 200px;
+        color: #fff;
+        font-size: 12px;
+        float: left;
+        margin-top: 4px;
+        margin-right: 100px;
+        span{
+          margin-left: -50px;
+        }
       }
-      li:active {
-        background-color #ffffff
-        color: #d91e01;
-      }
-      .active {
-        background-color #ffffff
-        color: #d91e01;
+      ul {
+        width 1212px
+        margin 0 auto
+        font-size 0
+        li {
+          display inline-block
+          margin-right 20px
+          text-align center
+          width 106px
+          height 48px
+          line-height 48px
+          font-size: 16px;
+          color: #f3f3f3;
+          cursor pointer
+        }
+        li:active {
+          background-color #ffffff
+          color: #d91e01;
+        }
+        .active {
+          background-color #ffffff
+          color: #d91e01;
+        }
       }
     }
   }
