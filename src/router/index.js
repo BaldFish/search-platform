@@ -32,9 +32,9 @@ export default new Router({
   routes: [
     {
       path: "/",
-      redirect: "/home"
+      redirect: "/app"
     },
-    {
+    /*{
       path: '/home',
       name: 'home',
       component: myHome
@@ -163,6 +163,6 @@ export default new Router({
       path: '/reportDetails',
       name: 'reportDetails',
       component: myReportDetails
-    },
+    },*/
   ]
 })

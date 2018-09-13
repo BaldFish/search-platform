@@ -3,67 +3,66 @@
     <div class="head-wrap">
       <my-toggle :toggleIndex="toggleIndex"></my-toggle>
     </div>
-
+    
     <div class="search">
       <div class="search-container">
         <div class="search-box">
           <div class="search-input">
-            <input type="text" placeholder="请输入你想要的商品名称">
+            <input type="text" v-model="input" placeholder="请输入你想要的商品名称" @keyup.enter="search()">
           </div>
-          <button type="button">搜索</button>
+          <button type="button" @click="search()">搜索</button>
           <div style="clear: both"></div>
           <span class="search-tips">百万积分大派送， 微信支付送等额可信积分！</span>
         </div>
       </div>
     </div>
-
     <div class="main_wrap">
-
       <div class="searchReport">
-
         <div class="tab-change">
           <span class="tab-tips">最新上架资产：</span>
           <ul>
             <li v-for="(item,index) of searchField">
-              <input type="radio" name="radio"  @click="searchToggle(index)">
-              <div class="radio-box">
-                <p>{{item}}</p>
-              </div>
+              <input type="radio" name="radio" @click="toggleSearch(item)">
+              <div class="radio-box"><p>{{item}}</p></div>
             </li>
           </ul>
-        <!--  <div class="more-search">
-            <img src="@/components/searchReport/images/more.png" alt="">
-            <span>更多搜索</span>
-          </div>-->
+          <!--  <div class="more-search">
+              <img src="@/components/searchReport/images/more.png" alt="">
+              <span>更多搜索</span>
+            </div>-->
         </div>
-
-        <div v-if="isMoreSearch" class="search_type">
+        <div v-if="isReport" class="search_type">
           <div class="type_territory">
             <span class="type_span">省市：</span>
             <area-select class="territory_input" v-model="territoryInput" :data="pca" type="text" @change="acquireSearchReportList"></area-select>
           </div>
           <div class="type_date">
             <span class="type_span">时间：</span>
-            <el-date-picker class="date_input" v-model="dateInput" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"
+            <el-date-picker class="date_input" v-model="dateInput" type="daterange" range-separator="至" start-placeholder="开始日期"
+                            end-placeholder="结束日期"
                             format="yyyy-MM-dd" default-value="2018-01-01" size="small" @change="acquireSearchReportList">
             </el-date-picker>
           </div>
           <div class="type_vin">
             <span class="type_span">VIN码：</span>
-            <el-input class="vin_input" v-model="vinInput" placeholder="请输入VIN" size="small" style="width:334px" @change="acquireSearchReportList"></el-input>
+            <el-input class="vin_input" v-model="vinInput" placeholder="请输入VIN" size="small" style="width:334px"
+                      @change="acquireSearchReportList"></el-input>
           </div>
           <div class="type_vin">
             <span class="type_span">技师号：</span>
-            <el-input class="vin_input" v-model="vinInput" placeholder="请输入技师号" size="small" style="width:334px" @change="acquireSearchReportList"></el-input>
+            <el-input class="vin_input" v-model="vinInput" placeholder="请输入技师号" size="small" style="width:334px"
+                      @change="acquireSearchReportList"></el-input>
           </div>
           <div class="type_vin">
             <span class="type_span">里程：</span>
-            <el-input class="vin_input" v-model="vinInput" placeholder="请输入里程" size="small" style="width:334px" @change="acquireSearchReportList"></el-input>
+            <el-input class="vin_input" v-model="vinInput" placeholder="请输入里程" size="small" style="width:334px"
+                      @change="acquireSearchReportList"></el-input>
             <span class="type_span" style="text-align: left;margin-left: 10px;">公里</span>
           </div>
           <div class="type_vin">
             <span class="type_span">诊断设备号：</span>
-            <el-input class="vin_input" v-model="vinInput" placeholder="请输入诊断设备号" size="small" style="width:334px" @change="acquireSearchReportList"></el-input>
+            <el-input class="vin_input" v-model="vinInput" placeholder="请输入诊断设备号" size="small" style="width:334px"
+                      @change="acquireSearchReportList"></el-input>
           </div>
           <div class="type_vin">
             <span class="type_span">高级选项：</span>
@@ -99,10 +98,9 @@
             </template>
           </div>
         </div>
-
-        <div class="buy-all">
+        <div class="buy-all"  v-if="isAll">
           <span class="buy-tips">
-            搜索出<span>10000</span>条，总共<span>15000</span>条；一次性购买<span>1000</span>条以上可享优惠
+            搜索出<span>{{total}}</span>条，总共<span>{{totalCount}}</span>条；一次性购买<span>1000</span>条以上可享优惠
           </span>
           <label>最新</label>
           <template>
@@ -117,17 +115,15 @@
           </template>
           <button type="button" class="buy-btn">一键认购</button>
         </div>
-
         <div class="case_list">
-          <div class="fr_case" v-for="(item,index) of searchReportList" :key="item.id">
+          <div class="fr_case" v-for="(item,index) of searchList" :key="item.id">
             <h4><a href="/caseDetails" @click="getReportDetails(item.id)" v-html="item.assetname"></a></h4>
             <div class="attestation">
               <span class="merchant" v-if="item.authtype==='认证商家'">{{item.authtype}}</span>
               <span class="person" v-if="item.authtype==='认证个人'">{{item.authtype}}</span>
               <span class="trust" v-if="item.creditlevel!=='未认证'">{{item.creditlevel}}</span>
             </div>
-
-            <div v-if="!isMoreSearch">
+            <div v-if="item.apikey==='5a6be74a55aaf50001a5e250'">
               <div class="putaway">
                 <a class="time" href="/caseDetails" @click="getCaseDetails(item.id)"><span>上架时间：</span>{{item.sell_at}}</a>
                 <a class="equity" href="/caseDetails" @click="getCaseDetails(item.id)"><span>权益：</span>{{item.sell_type}}</a>
@@ -140,13 +136,12 @@
               <div class="fault">
                 <p>
                   <a href="/caseDetails" @click="getCaseDetails(item.id)">
-                    <span>故障现象：</span>{{item.assetcontent}}
+                    <span>故障现象：</span><span v-html="item.assetcontent"></span>
                   </a>
                 </p>
               </div>
             </div>
-
-            <div v-if="isMoreSearch">
+            <div v-if="item.apikey==='5b18a5b9cff7cb000194f2f7'">
               <div class="putaway putaway-report">
                 <a class="time" href="/reportDetails" @click="getReportDetails(item.id)"><span>报告生成时间：</span>{{item.generate_time}}</a>
                 <a class="data" href="/reportDetails" @click="getReportDetails(item.id)"><span>数据来源：</span>{{item.resource}}</a>
@@ -157,7 +152,6 @@
                 <a class="equity" href="/reportDetails" @click="getReportDetails(item.id)"><span>权益：</span>{{item.sell_type}}</a>
               </div>
             </div>
-
             <!--<div :class="item.shopcart_id?'like':'dislike'" @click="toggleLike(item.id)">收藏</div>-->
             <div class="price_box">
               <a href="/caseDetails" @click="getCaseDetails(item.id)"><p class="price">{{item.price}}</p></a>
@@ -167,22 +161,19 @@
             <div class="bar"></div>
           </div>
         </div>
-
-
         <div class="clearfix paging">
           <el-pagination class="my_paging"
                          layout="prev, pager, next"
                          :background=true
                          :total=total
-                         :page-size=reportLimit
-                         :current-page.sync=reportPage
+                         :page-size=limit
+                         :current-page.sync=page
                          @current-change="handleCurrentChange">
           </el-pagination>
         </div>
       </div>
-  <!--    <router-view class="main"></router-view>-->
+      <!--    <router-view class="main"></router-view>-->
     </div>
-
     <div class="footer-wrap">
       <div class="footer">
         <div class="ft-box">
@@ -230,9 +221,9 @@
   import myToggle from "@/components/toggle/toggle"
   import utils from "@/common/js/utils.js";
   import {pca, pcaa} from 'area-data';
-
+  
   const querystring = require('querystring');
-
+  
   export default {
     name: 'App',
     components: {
@@ -241,22 +232,25 @@
     },
     data() {
       return {
+        page: 1,
+        limit: 10,
+        total: 10,
+        totalCount:"",
+        input: "",
+        searchType:"all",
+        isAll:false,
         territoryInput: [],
         dateInput: ["", ""],
         vinInput: "",
         pca: pca,
-        reportPage: 1,
-        reportLimit: 10,
-        total: 10,
-        searchReportList: [],
+        searchList: [],
         userId: "",
         token: "",
         apiKey: "",
         assetId: "",
         id: "",
-
-        toggleIndex:0,
-        isMoreSearch:false,
+        toggleIndex: 0,
+        isReport: false,
         searchField: ["诊断报告", "维修案例"],
         options: [{
           value: '选项1',
@@ -295,7 +289,7 @@
         this.userId = JSON.parse(sessionStorage.getItem("loginInfo")).user_id;
         this.token = JSON.parse(sessionStorage.getItem("loginInfo")).token;
       }
-      this.acquireSearchReportList();
+      this.acquireSearchAllList();
     },
     computed: {
       searchValue: function () {
@@ -304,27 +298,131 @@
       searchInput: function () {
         return this.$store.state.searchInput
       },
-      newTerritoryInput:function () {
+      newTerritoryInput: function () {
         if (this.territoryInput.length !== 0) {
           return this.territoryInput
-        }else{
-          return ["",""]
+        } else {
+          return ["", ""]
         }
       }
     },
     watch: {
       searchInput: function () {
         this.acquireSearchReportList();
-      }
+      },
     },
     methods: {
-      searchToggle(index){
-        console.log(index)
-        if (index === 0){
-          this.isMoreSearch = true
-        } else {
-          this.isMoreSearch = false
+      search() {
+        if(this.searchType==="all"){
+          this.acquireSearchAllList();
+        }else if(this.searchType==="report"){
+          this.acquireSearchReportList()
+        }else if(this.searchType==="case"){
+          this.acquireSearchCaseList()
         }
+      },
+      toggleSearch(val) {
+        if (val === "诊断报告") {
+          this.isReport = true;
+          this.isAll=true;
+          this.searchType="report";
+          this.page=1;
+          this.acquireSearchReportList();
+        } else if(val === "维修案例"){
+          this.isReport = false;
+          this.isAll=true;
+          this.searchType="case";
+          this.page=1;
+          this.acquireSearchCaseList();
+        }
+      },
+      //获取搜索所有列表
+      acquireSearchAllList() {
+        axios({
+          method: "GET",
+          url: `${baseURL}/v1/asset/search_all?key=${this.input}&page=${this.page}&limit=${this.limit}`,
+          headers: {
+            "Content-Type": "application/json",
+          }
+        }).then((res) => {
+          this.total = res.data.count;
+          for (let v of res.data.data) {
+            v.assetname = utils.searchHighlight(v.assetname, this.input, "color", "#c6351e");
+            if (v.apikey === "5a6be74a55aaf50001a5e250") {
+              v.sell_at = utils.formatDate(new Date(v.sell_at), "yyyy-MM-dd hh:mm:ss");
+              v.assetcontent = utils.searchHighlight(v.assetcontent, this.input, "color", "#c6351e");
+            } else if (v.apikey === "5b18a5b9cff7cb000194f2f7") {
+              v.generate_time = utils.formatDate(new Date(v.generate_time), "yyyy-MM-dd hh:mm:ss");
+            }
+          }
+          this.searchList = res.data.data;
+        }).catch((err) => {
+          console.log(err);
+        })
+      },
+      //获取搜索诊断报告列表
+      acquireSearchReportList() {
+        axios({
+          method: "GET",
+          url:
+            `${baseURL}/v1/asset/diagnoseReport/search?key=${this.input}&page=${this.page}&limit=${this.limit}&province=${this.newTerritoryInput[0]}&city=${this.newTerritoryInput[1]}&vin=${this.vinInput}&start_time=${this.dateInput[0]}&end_time=${this.dateInput[1]}`,
+          headers: {
+            "Content-Type": "application/json",
+          }
+        }).then((res) => {
+          if (res.data.data === null) {
+            this.searchList = [];
+            this.total = res.data.count;
+            this.totalCount = res.data.total_count;
+            return;
+          } else {
+            this.total = res.data.count;
+            this.totalCount = res.data.total_count;
+            for (let v of res.data.data) {
+              v.generate_time = utils.formatDate(new Date(v.generate_time), "yyyy-MM-dd hh:mm:ss");
+              v.sell_at = utils.formatDate(new Date(v.sell_at), "yyyy-MM-dd hh:mm:ss");
+              v.assetname = utils.searchHighlight(v.assetname, this.input, "color", "#c6351e");
+            }
+            this.searchList = res.data.data;
+          }
+        }).catch((err) => {
+          console.log(err);
+        })
+      },
+      //获取搜索案例列表
+      acquireSearchCaseList() {
+        axios({
+          method: "GET",
+          url: `${baseURL}/v1/asset/casus/search?key=${this.input}&page=${this.page}&limit=${this.limit}`,
+          headers: {
+            "Content-Type": "application/json",
+          }
+        }).then((res) => {
+          this.total = res.data.count;
+          this.totalCount = res.data.total_count;
+          for (let v of res.data.data) {
+            v.sell_at = utils.formatDate(new Date(v.sell_at), "yyyy-MM-dd hh:mm:ss");
+            v.assetname = utils.searchHighlight(v.assetname, this.input, "color", "#c6351e");
+            v.assetcontent = utils.searchHighlight(v.assetcontent, this.input, "color", "#c6351e");
+          }
+          this.searchList = res.data.data;
+        }).catch((err) => {
+          console.log(err);
+        })
+      },
+      getReportDetails(val) {
+        this.$store.commit("changeReportDetails", _.find(this.searchList, function (o) {
+          return o.id === val
+        }));
+      },
+      getCaseDetails(val) {
+        this.$store.commit("changeCaseDetails",_.find(this.searchList,function (o) {
+          return o.id===val
+        }));
+      },
+      handleCurrentChange(val) {
+        this.page = val;
+        this.search()
       },
       open() {
         this.$confirm('此操作需要先登录, 是否登录?', '提示', {
@@ -337,41 +435,7 @@
         }).catch(() => {
         });
       },
-      acquireSearchReportList() {
-        axios({
-          method: "GET",
-          url:
-            `${baseURL}/v1/asset/diagnoseReport/search?key=${this.searchInput}&page=${this.reportPage}&limit=${this.reportLimit}&province=${this.newTerritoryInput[0]}&city=${this.newTerritoryInput[1]}&vin=${this.vinInput}&start_time=${this.dateInput[0]}&end_time=${this.dateInput[1]}`,
-          headers: {
-            "Content-Type": "application/json",
-          }
-        }).then((res) => {
-          if (res.data.data === null) {
-            this.searchReportList=[]
-            return
-          } else {
-            this.total = res.data.count;
-            for (let v of res.data.data) {
-              v.generate_time = utils.formatDate(new Date(v.generate_time), "yyyy-MM-dd hh:mm:ss");
-              v.sell_at = utils.formatDate(new Date(v.sell_at), "yyyy-MM-dd hh:mm:ss");
-              v.assetname = utils.searchHighlight(v.assetname, this.searchInput, "color", "#c6351e");
-            }
-            this.searchReportList = res.data.data;
-          }
-        }).catch((err) => {
-          console.log(err);
-        })
-      },
-      getReportDetails(val) {
-        this.$store.commit("changeReportDetails", _.find(this.searchReportList, function (o) {
-          return o.id === val
-        }));
-      },
-      handleCurrentChange(val) {
-        this.reportPage = val;
-        this.acquireSearchReportList()
-      },
-      buy(val) {
+      /*buy(val) {
         if (JSON.parse(sessionStorage.getItem("loginInfo"))) {
           let buyInfoObj = _.find(this.searchReportList, function (o) {
             return o.id === val
@@ -449,7 +513,7 @@
       },
       subtractCollection() {
         this.$store.commit("subtractCollection")
-      },
+      },*/
     },
   }
 </script>
@@ -505,30 +569,29 @@
         }
       }
     }
-
   }
-
-  .search{
+  
+  .search {
     width: 100%;
     height: 100px;
     background-color: #ffffff;
     box-shadow: -1px 3px 6px 1px rgba(0, 0, 0, 0.13);
     margin-bottom: 22px;
-    .search-container{
-      width:1200px
-      margin:0 auto
-      .search-box{
-        width:1040px
-        margin:0 auto
+    .search-container {
+      width: 1200px
+      margin: 0 auto
+      .search-box {
+        width: 1040px
+        margin: 0 auto
         margin-top: 18px;
-        .search-input{
+        .search-input {
           width: 857px;
           height: 45px;
           border: solid 2px #d92104;
           float left
           font-size: 14px;
-          box-sizing:border-box;
-          input{
+          box-sizing: border-box;
+          input {
             outline none
             position: relative;
             left: 16px;
@@ -536,7 +599,7 @@
             width: 820px;
           }
         }
-        button{
+        button {
           width: 173px;
           height: 45px;
           background-color: #d92104;
@@ -547,7 +610,7 @@
           color: #fff;
           margin-left: 6px;
         }
-        .search-tips{
+        .search-tips {
           font-size: 12px;
           color: #d92104;
           margin: 10px 0
@@ -556,7 +619,7 @@
       }
     }
   }
-
+  
   .login-header {
     width: 100%;
     height: 130px;
@@ -686,30 +749,30 @@
 
 <style scoped lang="stylus">
   .searchReport {
-
-    .tab-change{
-      width:1200px
-      height:50px
-      margin:0 auto
-      .tab-tips{
+    
+    .tab-change {
+      width: 1200px
+      height: 50px
+      margin: 0 auto
+      .tab-tips {
         font-size: 16px;
         color: #666666;
         display inline-block
         line-height: 50px
       }
-      ul{
+      ul {
         width: 1078px;
         height: 50px;
         background-color: #ffffff;
         float right
-        li{
+        li {
           float left
           width: 160px;
           height: 50px;
           line-height 50px
           font-size: 16px;
           color: #d91e01;
-          input{
+          input {
             width: 160px;
             height: 50px;
             position: relative;
@@ -717,11 +780,11 @@
             cursor: pointer;
             opacity 0
           }
-          input:checked + .radio-box{
+          input:checked + .radio-box {
             background-color #d91e01
             color: #fff
           }
-          .radio-box{
+          .radio-box {
             position: relative;
             bottom: 70px;
             text-align: center;
@@ -729,7 +792,7 @@
           }
         }
       }
-      .more-search{
+      .more-search {
         font-size: 13px;
         color: #666;
         position: relative;
@@ -737,31 +800,31 @@
         left: 1100px;
         cursor: pointer;
         width: 100px;
-        img{
+        img {
           margin-right 6px
         }
       }
     }
-    .buy-all{
+    .buy-all {
       width 1200px
-      margin:0 auto
+      margin: 0 auto
       margin-top: 20px;
-      .buy-tips{
+      .buy-tips {
         font-size: 13px;
         color: #666666;
         margin-right 48px
         margin-left: 525px;
-        span{
+        span {
           color: #d91e01;
         }
       }
-      label{
+      label {
         font-size: 14px;
         color: #666666;
         margin-right 8px
       }
-      .buy-btn{
-        outline:none
+      .buy-btn {
+        outline: none
         width: 97px;
         height: 30px;
         background-color: #d92104;
@@ -773,8 +836,7 @@
         top: 1px;
       }
     }
-
-
+    
     .search_type {
       width 1198px
       margin 0 auto
@@ -783,7 +845,7 @@
       border: solid 1px #dcdcdc;
       margin-top 20px
     }
-
+    
     .case_list {
       width 1212px
       margin 0 auto
@@ -869,11 +931,11 @@
             background-image: url('./components/searchReport/images/Profit.png');
           }
         }
-        .putaway-report{
+        .putaway-report {
           margin-bottom 20px
         }
-        .belong{
-          a{
+        .belong {
+          a {
             display block
             line-height 22px
             padding-left 26px
@@ -882,7 +944,7 @@
             background-position: top left;
             color #666666;
             font-size 14px;
-            span{
+            span {
               color #222222;
               font-size 16px
             }
@@ -971,7 +1033,7 @@
             text-align center
           }
         }
-        .bar{
+        .bar {
           width 10px
           height 100%
           background-color #ff3b0b
@@ -980,11 +1042,11 @@
           right 0
         }
       }
-      .fr_case:hover{
+      .fr_case:hover {
         box-shadow: 2px 1px 17px 1px rgba(98, 98, 98, 0.28);
       }
     }
-    .fr_report:hover{
+    .fr_report:hover {
       box-shadow: 0px 0px 13px 1px rgba(218, 44, 89, 0.4);
     }
   }
