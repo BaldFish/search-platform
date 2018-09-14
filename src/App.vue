@@ -42,6 +42,11 @@
             </el-date-picker>
           </div>
           <div class="type_vin">
+            <span class="type_span">数据上链ID：</span>
+            <el-input class="vin_input" v-model="vinInput" placeholder="请输入上链ID" size="small" style="width:334px"
+                      @change="search"></el-input>
+          </div>
+          <div class="type_vin">
             <span class="type_span">VIN码：</span>
             <el-input class="vin_input" v-model="vinInput" placeholder="请输入VIN" size="small" style="width:334px"
                       @change="search"></el-input>

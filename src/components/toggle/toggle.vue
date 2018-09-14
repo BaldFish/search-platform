@@ -36,7 +36,7 @@
     methods: {
       toggle(index) {
         if (index === 0) {
-          this.$router.push("/home")
+          this.$router.push("/app")
         } else if (index === 1) {
 /*          if(JSON.parse(sessionStorage.getItem("loginInfo"))&&JSON.parse(sessionStorage.getItem("userName"))){
             let info={};
@@ -50,9 +50,11 @@
           }else{
             window.open('http://10.0.0.123:5001')
           }*/
-          window.open('http://47.92.98.66:5000')
+          //window.open('http://47.92.98.66:5000')
+          window.location.href="http://47.92.98.66:5000"
         } else if (index === 2) {
-          window.open('http://47.92.98.66:5001')
+          //window.open('http://47.92.98.66:5001')
+          window.location.href="http://47.92.98.66:5001"
         }
       }
     },
