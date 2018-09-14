@@ -3,9 +3,20 @@
     <div class="head-wrap">
       <my-toggle :toggleIndex="toggleIndex"></my-toggle>
     </div>
-    
     <div class="search">
       <div class="search-container">
+        <div class="tab-change">
+          <ul>
+            <li v-for="(item,index) of searchField">
+              <input type="radio" name="radio" @click.stop="TopToggleSearch(item)">
+              <div class="radio-box"><p>{{item}}</p></div>
+            </li>
+          </ul>
+          <!--  <div class="more-search">
+              <img src="@/components/searchReport/images/more.png" alt="">
+              <span>更多搜索</span>
+            </div>-->
+        </div>
         <div class="search-box">
           <div class="search-input">
             <input type="text" v-model="input" placeholder="请输入你想要的商品名称" @keyup.enter="search()">
@@ -18,9 +29,89 @@
     </div>
     <div class="main_wrap">
       <div class="searchReport">
+        <div class="search_type">
+          <div class="type_territory">
+            <span class="type_span">省市：</span>
+            <area-select class="territory_input" v-model="territoryInput" :data="pca" type="text" @change="search"></area-select>
+          </div>
+          <div class="type_date">
+            <span class="type_span">时间：</span>
+            <el-date-picker class="date_input" v-model="dateInput" type="daterange" range-separator="至" start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                            format="yyyy-MM-dd" default-value="2018-01-01" size="small" @change="search">
+            </el-date-picker>
+          </div>
+          <div class="type_vin">
+            <span class="type_span">VIN码：</span>
+            <el-input class="vin_input" v-model="vinInput" placeholder="请输入VIN" size="small" style="width:334px"
+                      @change="search"></el-input>
+          </div>
+          <div class="type_vin">
+            <span class="type_span">技师号：</span>
+            <el-input class="vin_input" v-model="vinInput" placeholder="请输入技师号" size="small" style="width:334px"
+                      @change="search"></el-input>
+          </div>
+          <div class="type_vin">
+            <span class="type_span">里程：</span>
+            <el-input class="vin_input" v-model="vinInput" placeholder="请输入里程" size="small" style="width:334px"
+                      @change="search"></el-input>
+            <span class="type_span" style="text-align: left;margin-left: 10px;">公里</span>
+          </div>
+          <div class="type_vin">
+            <span class="type_span">诊断设备号：</span>
+            <el-input class="vin_input" v-model="vinInput" placeholder="请输入诊断设备号" size="small" style="width:334px"
+                      @change="search"></el-input>
+          </div>
+          <div class="type_vin">
+            <span class="type_span">高级选项：</span>
+            <template>
+              <el-select v-model="value1" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="车厂">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </template>
+            <template>
+              <el-select v-model="value2" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="车系品牌">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </template>
+            <template>
+              <el-select v-model="value3" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="车型">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </template>
+            <template>
+              <el-select v-model="value4" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="车年款">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </template>
+            
+          </div>
+        </div>
         <div class="tab-change">
-          <span class="tab-tips">最新上架资产：</span>
-          <ul>
+          <span class="tab-tips" v-if="isTopAll">最新上架资产：</span>
+          <span class="tab-tips" v-if="isTopReport">诊断报告</span>
+          <span class="tab-tips" v-if="isTopCase">维修案例</span>
+          <ul v-if="isTopAll">
             <li v-for="(item,index) of searchField">
               <input type="radio" name="radio" @click="toggleSearch(item)">
               <div class="radio-box"><p>{{item}}</p></div>
@@ -31,76 +122,9 @@
               <span>更多搜索</span>
             </div>-->
         </div>
-        <div v-if="isReport" class="search_type">
-          <div class="type_territory">
-            <span class="type_span">省市：</span>
-            <area-select class="territory_input" v-model="territoryInput" :data="pca" type="text" @change="acquireSearchReportList"></area-select>
-          </div>
-          <div class="type_date">
-            <span class="type_span">时间：</span>
-            <el-date-picker class="date_input" v-model="dateInput" type="daterange" range-separator="至" start-placeholder="开始日期"
-                            end-placeholder="结束日期"
-                            format="yyyy-MM-dd" default-value="2018-01-01" size="small" @change="acquireSearchReportList">
-            </el-date-picker>
-          </div>
-          <div class="type_vin">
-            <span class="type_span">VIN码：</span>
-            <el-input class="vin_input" v-model="vinInput" placeholder="请输入VIN" size="small" style="width:334px"
-                      @change="acquireSearchReportList"></el-input>
-          </div>
-          <div class="type_vin">
-            <span class="type_span">技师号：</span>
-            <el-input class="vin_input" v-model="vinInput" placeholder="请输入技师号" size="small" style="width:334px"
-                      @change="acquireSearchReportList"></el-input>
-          </div>
-          <div class="type_vin">
-            <span class="type_span">里程：</span>
-            <el-input class="vin_input" v-model="vinInput" placeholder="请输入里程" size="small" style="width:334px"
-                      @change="acquireSearchReportList"></el-input>
-            <span class="type_span" style="text-align: left;margin-left: 10px;">公里</span>
-          </div>
-          <div class="type_vin">
-            <span class="type_span">诊断设备号：</span>
-            <el-input class="vin_input" v-model="vinInput" placeholder="请输入诊断设备号" size="small" style="width:334px"
-                      @change="acquireSearchReportList"></el-input>
-          </div>
-          <div class="type_vin">
-            <span class="type_span">高级选项：</span>
-            <template>
-              <el-select v-model="value1" size="small" style="margin-right: 25px" placeholder="车系品牌">
-                <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </template>
-            <template>
-              <el-select v-model="value2" size="small" style="margin-right: 25px" placeholder="车年款">
-                <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </template>
-            <template>
-              <el-select v-model="value3" size="small" placeholder="车厂">
-                <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </template>
-          </div>
-        </div>
-        <div class="buy-all"  v-if="isAll">
+        <div class="fr buy-all"  v-if="isAll">
           <span class="buy-tips">
-            搜索出<span>{{total}}</span>条，总共<span>{{totalCount}}</span>条；一次性购买<span>1000</span>条以上可享优惠
+            为您找到相关结果<span>{{totalCount}}</span>条，本次显示 <span>{{total}}</span>条
           </span>
           <label>最新</label>
           <template>
@@ -115,50 +139,67 @@
           </template>
           <button type="button" class="buy-btn">一键认购</button>
         </div>
-        <div class="case_list">
-          <div class="fr_case" v-for="(item,index) of searchList" :key="item.id">
-            <h4><a href="/caseDetails" @click="getReportDetails(item.id)" v-html="item.assetname"></a></h4>
-            <div class="attestation">
-              <span class="merchant" v-if="item.authtype==='认证商家'">{{item.authtype}}</span>
-              <span class="person" v-if="item.authtype==='认证个人'">{{item.authtype}}</span>
-              <span class="trust" v-if="item.creditlevel!=='未认证'">{{item.creditlevel}}</span>
-            </div>
-            <div v-if="item.apikey==='5a6be74a55aaf50001a5e250'">
-              <div class="putaway">
-                <a class="time" href="/caseDetails" @click="getCaseDetails(item.id)"><span>上架时间：</span>{{item.sell_at}}</a>
-                <a class="equity" href="/caseDetails" @click="getCaseDetails(item.id)"><span>权益：</span>{{item.sell_type}}</a>
+        <div class="case_list" >
+          <div v-for="(item,index) of searchList" :key="item.id" @click="getDetails(item.apikey,item.assetid)">
+            <div class="fr_case" v-if="item.apikey==='5a6be74a55aaf50001a5e250'">
+              <h4><a href="javascript:void(0)" v-html="item.assetname"></a></h4>
+              <div class="attestation">
+                <span class="merchant" v-if="item.authtype==='认证商家'">{{item.authtype}}</span>
+                <span class="person" v-if="item.authtype==='认证个人'">{{item.authtype}}</span>
+                <span class="trust" v-if="item.creditlevel!=='未认证'">{{item.creditlevel}}</span>
               </div>
-              <div class="belong">
-                <a href="/caseDetails" @click="getCaseDetails(item.id)">
-                  <span>所属人：</span>{{item.assetowner}}
-                </a>
-              </div>
-              <div class="fault">
-                <p>
-                  <a href="/caseDetails" @click="getCaseDetails(item.id)">
-                    <span>故障现象：</span><span v-html="item.assetcontent"></span>
+              <div>
+                <div class="putaway">
+                  <a class="time" href="javascript:void(0)"><span>上架时间：</span>{{item.sell_at}}</a>
+                  <a class="equity" href="javascript:void(0)"><span>权益：</span>{{item.sell_type}}</a>
+                </div>
+                <div class="belong">
+                  <a href="javascript:void(0)">
+                    <span>所属人：</span>{{item.assetowner}}
                   </a>
-                </p>
+                </div>
+                <div class="fault">
+                  <p>
+                    <a href="javascript:void(0)">
+                      <span>故障现象：</span><span v-html="item.assetcontent"></span>
+                    </a>
+                  </p>
+                </div>
               </div>
-            </div>
-            <div v-if="item.apikey==='5b18a5b9cff7cb000194f2f7'">
-              <div class="putaway putaway-report">
-                <a class="time" href="/reportDetails" @click="getReportDetails(item.id)"><span>报告生成时间：</span>{{item.generate_time}}</a>
-                <a class="data" href="/reportDetails" @click="getReportDetails(item.id)"><span>数据来源：</span>{{item.resource}}</a>
+              <!--<div :class="item.shopcart_id?'like':'dislike'" @click="toggleLike(item.id)">收藏</div>-->
+              <div class="price_box">
+                <a href="javascript:void(0)"><p class="price">{{item.price}}</p></a>
+                <!-- <a href="/caseSource" @click="getCaseSource(item.id)"><p class="tracing">可信溯源</p></a>
+                 <a href="javascript:void(0)" @click="buy(item.id)"><p class="buy">一键购买</p></a>-->
               </div>
-              <div class="putaway putaway-report">
-                <a class="vin" href="/reportDetails" @click="getReportDetails(item.id)"><span>VIN码：</span>{{item.vin}}</a>
-                <a class="breakdown" href="/reportDetails" @click="getReportDetails(item.id)"><span>故障码个数：</span>{{item.fault_n}}个</a>
-                <a class="equity" href="/reportDetails" @click="getReportDetails(item.id)"><span>权益：</span>{{item.sell_type}}</a>
+              <div class="bar"></div>
+            </div>
+            <div class="fr_case" v-if="item.apikey==='5b18a5b9cff7cb000194f2f7'">
+              <h4><a href="javascript:void(0)" v-html="item.assetname"></a></h4>
+              <div class="attestation">
+                <span class="merchant" v-if="item.authtype==='认证商家'">{{item.authtype}}</span>
+                <span class="person" v-if="item.authtype==='认证个人'">{{item.authtype}}</span>
+                <span class="trust" v-if="item.creditlevel!=='未认证'">{{item.creditlevel}}</span>
               </div>
+              <div>
+                <div class="putaway putaway-report">
+                  <a class="time" href="javascript:void(0)" @click="getReportDetails(item.id)"><span>报告生成时间：</span>{{item.generate_time}}</a>
+                  <a class="data" href="javascript:void(0)" @click="getReportDetails(item.id)"><span>数据来源：</span>{{item.resource}}</a>
+                </div>
+                <div class="putaway putaway-report">
+                  <a class="vin" href="javascript:void(0)" @click="getReportDetails(item.id)"><span>VIN码：</span>{{item.vin}}</a>
+                  <a class="breakdown" href="javascript:void(0)" @click="getReportDetails(item.id)"><span>故障码个数：</span>{{item.fault_n}}个</a>
+                  <a class="equity" href="javascript:void(0)" @click="getReportDetails(item.id)"><span>权益：</span>{{item.sell_type}}</a>
+                </div>
+              </div>
+              <!--<div :class="item.shopcart_id?'like':'dislike'" @click="toggleLike(item.id)">收藏</div>-->
+              <div class="price_box">
+                <a href="javascript:void(0)"><p class="price">{{item.price}}</p></a>
+                <!-- <a href="/caseSource" @click="getCaseSource(item.id)"><p class="tracing">可信溯源</p></a>
+                 <a href="javascript:void(0)" @click="buy(item.id)"><p class="buy">一键购买</p></a>-->
+              </div>
+              <div class="bar"></div>
             </div>
-            <!--<div :class="item.shopcart_id?'like':'dislike'" @click="toggleLike(item.id)">收藏</div>-->
-            <div class="price_box">
-              <a href="/caseDetails" @click="getCaseDetails(item.id)"><p class="price">{{item.price}}</p></a>
-              <!-- <a href="/caseSource" @click="getCaseSource(item.id)"><p class="tracing">可信溯源</p></a>
-               <a href="javascript:void(0)" @click="buy(item.id)"><p class="buy">一键购买</p></a>-->
-            </div>
-            <div class="bar"></div>
           </div>
         </div>
         <div class="clearfix paging">
@@ -239,6 +280,11 @@
         input: "",
         searchType:"all",
         isAll:false,
+        //isReport: false,
+        toggleIndex: 0,
+        isTopAll:true,
+        isTopCase:false,
+        isTopReport:false,
         territoryInput: [],
         dateInput: ["", ""],
         vinInput: "",
@@ -249,8 +295,6 @@
         apiKey: "",
         assetId: "",
         id: "",
-        toggleIndex: 0,
-        isReport: false,
         searchField: ["诊断报告", "维修案例"],
         options: [{
           value: '选项1',
@@ -271,16 +315,14 @@
         value1: '',
         value2: '',
         value3: '',
+        value4: '',
         number: [{
-          value: '选项1',
+          value: '1',
+          label: '全部'
+        }, {
+          value: '2',
           label: '1000'
-        }, {
-          value: '选项2',
-          label: '2000'
-        }, {
-          value: '选项3',
-          label: '3000'
-        }],
+        },],
         numbervalue: '',
       }
     },
@@ -321,19 +363,37 @@
           this.acquireSearchCaseList()
         }
       },
+      TopToggleSearch(val) {
+        this.isAll=true;
+        this.page=1;
+        if (val === "诊断报告") {
+          //this.isReport = true;
+          this.isTopAll=false;
+          this.isTopCase=false;
+          this.isTopReport=true;
+          this.searchType="report";
+          this.search()
+        } else if(val === "维修案例"){
+          //this.isReport = false;
+          this.isTopAll=false;
+          this.isTopCase=true;
+          this.isTopReport=false;
+          this.searchType="case";
+          this.search()
+        }
+      },
+      //搜索类型切换并执行搜索
       toggleSearch(val) {
+        this.isAll=true;
+        this.page=1;
         if (val === "诊断报告") {
           this.isReport = true;
-          this.isAll=true;
           this.searchType="report";
-          this.page=1;
-          this.acquireSearchReportList();
+          this.search()
         } else if(val === "维修案例"){
           this.isReport = false;
-          this.isAll=true;
           this.searchType="case";
-          this.page=1;
-          this.acquireSearchCaseList();
+          this.search()
         }
       },
       //获取搜索所有列表
@@ -409,6 +469,9 @@
         }).catch((err) => {
           console.log(err);
         })
+      },
+      getDetails(apiKey,assetId){
+      console.log(apiKey,assetId)
       },
       getReportDetails(val) {
         this.$store.commit("changeReportDetails", _.find(this.searchList, function (o) {
@@ -573,17 +636,74 @@
   
   .search {
     width: 100%;
-    height: 100px;
+    height: 150px;
     background-color: #ffffff;
     box-shadow: -1px 3px 6px 1px rgba(0, 0, 0, 0.13);
-    margin-bottom: 22px;
+    //margin-bottom: 22px;
+    
     .search-container {
       width: 1200px
       margin: 0 auto
+      .tab-change {
+        display inline-block
+        //width: 1200px
+        height: 50px
+        margin: 0 auto
+        margin-left 30px
+        .tab-tips {
+          font-size: 16px;
+          color: #666666;
+          display inline-block
+          line-height: 50px
+        }
+        ul {
+          height: 50px;
+          //background-color: #ffffff;
+          float right
+          li {
+            float left
+            width: 160px;
+            height: 50px;
+            line-height 50px
+            font-size: 16px;
+            color: #333333;
+            text-align center
+            input {
+              width: 100px;
+              height: 50px;
+              position: relative;
+              z-index: 10;
+              cursor: pointer;
+              opacity 0
+            }
+            input:checked + .radio-box {
+              color: #d91e01
+            }
+            .radio-box {
+              position: relative;
+              bottom: 70px;
+              text-align: center;
+              height: 50px;
+            }
+          }
+        }
+        .more-search {
+          font-size: 13px;
+          color: #666;
+          position: relative;
+          bottom: 31px;
+          left: 1100px;
+          cursor: pointer;
+          width: 100px;
+          img {
+            margin-right 6px
+          }
+        }
+      }
       .search-box {
         width: 1040px
         margin: 0 auto
-        margin-top: 18px;
+        //margin-top: 18px;
         .search-input {
           width: 857px;
           height: 45px;
@@ -749,9 +869,11 @@
 
 <style scoped lang="stylus">
   .searchReport {
-    
+    width 1200px
+    margin 0 auto
     .tab-change {
-      width: 1200px
+      display inline-block
+      //width: 1200px
       height: 50px
       margin: 0 auto
       .tab-tips {
@@ -761,9 +883,8 @@
         line-height: 50px
       }
       ul {
-        width: 1078px;
         height: 50px;
-        background-color: #ffffff;
+        //background-color: #ffffff;
         float right
         li {
           float left
@@ -771,9 +892,10 @@
           height: 50px;
           line-height 50px
           font-size: 16px;
-          color: #d91e01;
+          color: #333333;
+          text-align center
           input {
-            width: 160px;
+            width: 100px;
             height: 50px;
             position: relative;
             z-index: 10;
@@ -781,8 +903,7 @@
             opacity 0
           }
           input:checked + .radio-box {
-            background-color #d91e01
-            color: #fff
+            color: #d91e01
           }
           .radio-box {
             position: relative;
@@ -806,14 +927,14 @@
       }
     }
     .buy-all {
-      width 1200px
+      display inline-block
       margin: 0 auto
-      margin-top: 20px;
+      margin-top: 9px;
+      text-align right
       .buy-tips {
         font-size: 13px;
         color: #666666;
-        margin-right 48px
-        margin-left: 525px;
+        margin-right 80px
         span {
           color: #d91e01;
         }
@@ -847,16 +968,16 @@
     }
     
     .case_list {
-      width 1212px
+      width 1200px
       margin 0 auto
-      padding-top: 12px
       .fr_case {
+        cursor pointer
+        width 1200px
+        height 220px
         margin 0 auto
         margin-bottom 18px
         position relative
         box-sizing border-box
-        width 1198px
-        height 220px
         background-color rgba(255, 255, 255, 0.8)
         /*opacity: 0.8;*/
         padding 15px 20px
@@ -1043,11 +1164,8 @@
         }
       }
       .fr_case:hover {
-        box-shadow: 2px 1px 17px 1px rgba(98, 98, 98, 0.28);
+        box-shadow: 0px 0px 13px 1px rgba(218, 44, 89, 0.4);
       }
-    }
-    .fr_report:hover {
-      box-shadow: 0px 0px 13px 1px rgba(218, 44, 89, 0.4);
     }
   }
 </style>
