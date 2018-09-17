@@ -7,6 +7,11 @@
       </div>
       <ul>
         <li v-for="(item,index) of toggleParam" @click="toggle(index)" :class="{active:index===toggleIndex}">{{item}}</li>
+        <li class="head">
+          <a href="/">欢迎来到 可信链 ！</a>
+          <a href="http://47.92.98.66:5000/login">请登录</a>
+          <a href="http://47.92.98.66:5000/register">免费注册</a>
+        </li>
       </ul>
     </div>
   </div>
@@ -107,4 +112,16 @@
     }
   }
 
+  .head{
+    width 300px !important
+    font-size: 12px !important;
+    float right
+    a{
+      color: #fff;
+      margin-right 40px
+    }
+    a:last-child{
+      margin-right 0
+    }
+  }
 </style>
