@@ -51,25 +51,25 @@
               <span class="type_span">省市：</span>
               <area-select class="territory_input" v-model="territoryInput" :data="pca" type="text" @change="search"></area-select>
             </div>
+            <div class="type_vin">
+              <span class="type_span">数据上链ID：</span>
+              <el-input class="vin_input" v-model="vinInput" placeholder="请输入上链ID" size="small" style="width:334px"
+                        @change="search"></el-input>
+            </div>
+            <div class="type_vin">
+              <span class="type_span">VIN码：</span>
+              <el-input class="vin_input" v-model="vinInput" placeholder="请输入VIN" size="small" style="width:334px"
+                        @change="search"></el-input>
+            </div>
+          </div>
+
+          <div>
             <div class="type_date">
               <span class="type_span">时间：</span>
               <el-date-picker class="date_input" v-model="dateInput" type="daterange" range-separator="至" start-placeholder="开始日期"
                               end-placeholder="结束日期"
                               format="yyyy-MM-dd" default-value="2018-01-01" size="small" @change="search">
               </el-date-picker>
-            </div>
-            <div class="type_vin">
-              <span class="type_span">数据上链ID：</span>
-              <el-input class="vin_input" v-model="vinInput" placeholder="请输入上链ID" size="small" style="width:334px"
-                        @change="search"></el-input>
-            </div>
-          </div>
-
-          <div>
-            <div class="type_vin">
-              <span class="type_span">VIN码：</span>
-              <el-input class="vin_input" v-model="vinInput" placeholder="请输入VIN" size="small" style="width:334px"
-                        @change="search"></el-input>
             </div>
             <div class="type_vin">
               <span class="type_span">技师号：</span>
