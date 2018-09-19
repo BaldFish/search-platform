@@ -406,7 +406,7 @@
     data() {
       return {
         page: 1,
-        limit: 2,
+        limit: 10,
         total: 10,
         totalCount:"",
         input: "",
