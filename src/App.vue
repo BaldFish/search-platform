@@ -8,17 +8,17 @@
         <div class="tab-change">
           <!--<ul>
             <li v-for="(item,index) of searchField">
-              <input type="radio" name="radio" @click.stop="TopToggleSearch(item)">
+              <input type="radio" name="radioTop" v-model="searchType" :value="item" @click.stop="toggleSearch(item)" ref="radioTop">
               <div class="radio-box"><p>{{item}}</p></div>
             </li>
           </ul>-->
           <ul>
             <li>
-              <input type="radio" name="radio" @click.stop="TopToggleSearch('诊断报告')" checked="checked">
+              <input type="radio" name="radioTop" @click.stop="toggleSearch('诊断报告')" ref="radioTop">
               <div class="radio-box"><p>{{'诊断报告'}}</p></div>
             </li>
             <li>
-              <input type="radio" name="radio" @click.stop="TopToggleSearch('维修案例')">
+              <input type="radio" name="radioTop" @click.stop="toggleSearch('维修案例')">
               <div class="radio-box"><p>{{'维修案例'}}</p></div>
             </li>
           </ul>
@@ -27,11 +27,108 @@
               <span>更多搜索</span>
             </div>-->
         </div>
-        <div class="search-box">
-          <div class="search-input">
-            <input type="text" v-model="input" placeholder="请输入你想要的商品名称" @keyup.enter="search()">
+        <div class="search_type" v-if="isReport">
+          <div style="float: left">
+            <div class="type_territory">
+              <span class="type_span">省市：</span>
+              <area-select class="territory_input" v-model="territoryInput" :data="pca" type="text" @change="reportSearch"></area-select>
+            </div>
+            <div class="type_vin">
+              <span class="type_span">数据上链ID：</span>
+              <el-input class="vin_input" v-model="idInput" placeholder="请输入上链ID" size="small" style="width:334px"
+                        @change="reportSearch"></el-input>
+            </div>
+            <div class="type_vin">
+              <span class="type_span">VIN码：</span>
+              <el-input class="vin_input" v-model="vinInput" placeholder="请输入VIN" size="small" style="width:334px"
+                        @change="reportSearch"></el-input>
+            </div>
           </div>
-          <button type="button" @click="search()">搜索</button>
+          <div>
+            <div class="type_date">
+              <span class="type_span">时间：</span>
+              <el-date-picker class="date_input" v-model="dateInput" type="daterange" range-separator="至" start-placeholder="开始日期"
+                              end-placeholder="结束日期"
+                              format="yyyy-MM-dd" default-value="2018-01-01" size="small" @change="reportSearch">
+              </el-date-picker>
+            </div>
+            <div class="type_vin">
+              <span class="type_span">技师号：</span>
+              <el-input class="vin_input" v-model="technicianInput" placeholder="请输入技师号" size="small" style="width:334px"
+                        @change="reportSearch"></el-input>
+            </div>
+            <div class="type_vin">
+              <span class="type_span">诊断设备号：</span>
+              <el-input class="vin_input" v-model="facilityInput" placeholder="请输入诊断设备号" size="small" style="width:334px"
+                        @change="reportSearch"></el-input>
+            </div>
+          </div>
+          <div style="clear:both"></div>
+          <div class="type_vin">
+            <span class="type_span">高级选项：</span>
+            <template>
+              <el-select v-model="value1" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="车厂">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                  @change="reportSearch">
+                </el-option>
+              </el-select>
+            </template>
+            <template>
+              <el-select v-model="value2" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="车系品牌">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                  @change="reportSearch">
+                </el-option>
+              </el-select>
+            </template>
+            <template>
+              <el-select v-model="value3" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="车型">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                  @change="reportSearch">
+                </el-option>
+              </el-select>
+            </template>
+            <template>
+              <el-select v-model="value4" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="车年款">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                  @change="reportSearch">
+                </el-option>
+              </el-select>
+            </template>
+            <template>
+              <el-select v-model="value5" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="里程">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                  @change="reportSearch">
+                </el-option>
+              </el-select>
+            </template>
+    
+          </div>
+        </div>
+        <div class="search-box" v-if="!isReport">
+          <div class="search-input">
+            <input type="text" v-model="input" placeholder="请输入你想要的商品名称" @keyup.enter="caseSearch">
+          </div>
+          <button type="button" @click="caseSearch">搜索</button>
           <div style="clear: both"></div>
           <span class="search-tips">
             <marquee behavior="scroll" direction="up" scrollamount="3" scrolldelay="200" height="16" onmouseover=this.stop() onmouseout=this.start()>
@@ -45,44 +142,42 @@
     </div>
     <div class="main_wrap">
       <div class="searchReport">
-        <div class="search_type">
+        <!--<div class="search_type" v-if="isReport">
           <div style="float: left">
             <div class="type_territory">
               <span class="type_span">省市：</span>
-              <area-select class="territory_input" v-model="territoryInput" :data="pca" type="text" @change="search"></area-select>
+              <area-select class="territory_input" v-model="territoryInput" :data="pca" type="text" @change="reportSearch"></area-select>
             </div>
             <div class="type_vin">
               <span class="type_span">数据上链ID：</span>
               <el-input class="vin_input" v-model="vinInput" placeholder="请输入上链ID" size="small" style="width:334px"
-                        @change="search"></el-input>
+                        @change="reportSearch"></el-input>
             </div>
             <div class="type_vin">
               <span class="type_span">VIN码：</span>
               <el-input class="vin_input" v-model="vinInput" placeholder="请输入VIN" size="small" style="width:334px"
-                        @change="search"></el-input>
+                        @change="reportSearch"></el-input>
             </div>
           </div>
-
           <div>
             <div class="type_date">
               <span class="type_span">时间：</span>
               <el-date-picker class="date_input" v-model="dateInput" type="daterange" range-separator="至" start-placeholder="开始日期"
                               end-placeholder="结束日期"
-                              format="yyyy-MM-dd" default-value="2018-01-01" size="small" @change="search">
+                              format="yyyy-MM-dd" default-value="2018-01-01" size="small" @change="reportSearch">
               </el-date-picker>
             </div>
             <div class="type_vin">
               <span class="type_span">技师号：</span>
               <el-input class="vin_input" v-model="vinInput" placeholder="请输入技师号" size="small" style="width:334px"
-                        @change="search"></el-input>
+                        @change="reportSearch"></el-input>
             </div>
             <div class="type_vin">
               <span class="type_span">诊断设备号：</span>
               <el-input class="vin_input" v-model="vinInput" placeholder="请输入诊断设备号" size="small" style="width:334px"
-                        @change="search"></el-input>
+                        @change="reportSearch"></el-input>
             </div>
           </div>
-
           <div style="clear:both"></div>
           <div class="type_vin">
             <span class="type_span">高级选项：</span>
@@ -92,7 +187,8 @@
                   v-for="item in options"
                   :key="item.value"
                   :label="item.label"
-                  :value="item.value">
+                  :value="item.value"
+                  @change="reportSearch">
                 </el-option>
               </el-select>
             </template>
@@ -102,7 +198,8 @@
                   v-for="item in options"
                   :key="item.value"
                   :label="item.label"
-                  :value="item.value">
+                  :value="item.value"
+                  @change="reportSearch">
                 </el-option>
               </el-select>
             </template>
@@ -112,7 +209,8 @@
                   v-for="item in options"
                   :key="item.value"
                   :label="item.label"
-                  :value="item.value">
+                  :value="item.value"
+                  @change="reportSearch">
                 </el-option>
               </el-select>
             </template>
@@ -122,7 +220,8 @@
                   v-for="item in options"
                   :key="item.value"
                   :label="item.label"
-                  :value="item.value">
+                  :value="item.value"
+                  @change="reportSearch">
                 </el-option>
               </el-select>
             </template>
@@ -132,23 +231,24 @@
                   v-for="item in options"
                   :key="item.value"
                   :label="item.label"
-                  :value="item.value">
+                  :value="item.value"
+                  @change="reportSearch">
                 </el-option>
               </el-select>
             </template>
             
           </div>
-        </div>
+        </div>-->
         <div class="tab-change">
           <span class="tab-tips" v-if="isTopAll">最新上架资产：</span>
-          <span class="tab-tips" v-if="isTopReport">诊断报告</span>
-          <span class="tab-tips" v-if="isTopCase">维修案例</span>
           <ul v-if="isTopAll">
             <li v-for="(item,index) of searchField">
-              <input type="radio" name="radio" @click="toggleSearch(item)">
+              <input type="radio" name="radioFiltrate" @click="toggleFiltrate(item)">
               <div class="radio-box"><p>{{item}}</p></div>
             </li>
           </ul>
+          <span class="tab-tips" v-if="isTopReport">诊断报告</span>
+          <span class="tab-tips" v-if="isTopCase">维修案例</span>
           <!--  <div class="more-search">
               <img src="@/components/searchReport/images/more.png" alt="">
               <span>更多搜索</span>
@@ -306,20 +406,23 @@
     data() {
       return {
         page: 1,
-        limit: 10,
+        limit: 2,
         total: 10,
         totalCount:"",
         input: "",
-        searchType:"report",
+        searchType:"全部",
         isAll:false,
-        //isReport: false,
+        isReport: true,
         toggleIndex: 0,
         isTopAll:true,
         isTopCase:false,
         isTopReport:false,
         territoryInput: [],
         dateInput: ["", ""],
+        idInput: "",
+        technicianInput: "",
         vinInput: "",
+        facilityInput: "",
         pca: pca,
         searchList: [],
         userId: "",
@@ -387,55 +490,68 @@
       },
     },
     methods: {
-      search() {
+      //搜索诊断报告
+      reportSearch() {
+        this.$set(this.$refs.radioTop,'checked',true)
+        //this.$refs.radioTop.checked=true
         this.isAll=true;
-        if(this.searchType==="all"){
-          this.acquireSearchAllList();
-        }else if(this.searchType==="report"){
-          this.isTopAll=false;
-          this.isTopReport=true;
-          this.isTopCase=false;
+        this.isReport = true;
+        this.isTopAll=false;
+        this.isTopReport=true;
+        this.isTopCase=false;
+        this.searchType==="诊断报告"
+        this.acquireSearchReportList()
+      },
+      //搜索维修案例
+      caseSearch(){
+        this.isAll=true;
+        this.isReport = false;
+        this.isTopAll=false;
+        this.isTopReport=false;
+        this.isTopCase=true;
+        this.searchType==="维修案例"
+        this.acquireSearchCaseList()
+      },
+      //顶部类型切换更改显示内容并执行搜索
+      toggleSearch(val) {
+        this.page=1;
+        this.isAll=true;
+        if(val==="诊断报告"){
+            this.isReport = true;
+            this.isTopAll=false;
+            this.isTopReport=true;
+            this.isTopCase=false;
+            this.searchType==="诊断报告"
           this.acquireSearchReportList()
-        }else if(this.searchType==="case"){
+        } else if(val === "维修案例"){
+          this.isReport = false;
           this.isTopAll=false;
-          this.isTopCase=true;
           this.isTopReport=false;
+          this.isTopCase=true;
+          this.searchType==="维修案例"
           this.acquireSearchCaseList()
         }
       },
-      TopToggleSearch(val) {
-        //this.isAll=true;
+      //最新上架资产按类型切换筛查
+      toggleFiltrate(val) {
         this.page=1;
+        this.isAll=true;
         if (val === "诊断报告") {
-          //this.isReport = true;
-
-          this.searchType="report";
-          //this.search()
+          this.searchType==="诊断报告"
+          this.acquireSearchReportList();
         } else if(val === "维修案例"){
-          //this.isReport = false;
-
-          this.searchType="case";
-          //this.search()
+          this.searchType==="维修案例"
+          this.acquireSearchCaseList();
         }
       },
-      //搜索类型切换并执行搜索
-      toggleSearch(val) {
-        //this.isAll=true;
-        this.page=1;
-        if (val === "诊断报告") {
-          this.isReport = true;
-          this.searchType="report";
-          this.search();
-          this.isAll=false;
-          this.isTopAll=true;
-          this.isTopReport=false;
-        } else if(val === "维修案例"){
-          this.isReport = false;
-          this.searchType="case";
-          this.search();
-          this.isAll=false;
-          this.isTopAll=true;
-          this.isTopCase=false;
+      //分页获取相对应的列表
+      pagingSearch(){
+        if(this.searchType==="全部"){
+          this.acquireSearchAllList();
+        }else if(this.searchType==="诊断报告"){
+          this.acquireSearchReportList();
+        }else if(this.searchType==="维修案例"){
+          this.acquireSearchCaseList();
         }
       },
       //获取搜索所有列表
@@ -527,7 +643,7 @@
       },
       handleCurrentChange(val) {
         this.page = val;
-        this.search()
+        this.pagingSearch()
       },
       open() {
         this.$confirm('此操作需要先登录, 是否登录?', '提示', {
@@ -625,7 +741,7 @@
 
 <style scoped lang="stylus">
   #app {
-    min-height: 98vh;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
   }
@@ -678,17 +794,14 @@
   
   .search {
     width: 100%;
-    height: 150px;
+    //height: 150px;
     background-color: #ffffff;
     box-shadow: -1px 3px 6px 1px rgba(0, 0, 0, 0.13);
-    //margin-bottom: 22px;
-    
     .search-container {
       width: 1200px
       margin: 0 auto
       .tab-change {
         display inline-block
-        //width: 1200px
         height: 50px
         margin: 0 auto
         margin-left 30px
@@ -748,7 +861,6 @@
       .search-box {
         width: 1040px
         margin: 0 auto
-        //margin-top: 18px;
         .search-input {
           width: 857px;
           height: 45px;
@@ -786,10 +898,18 @@
           cursor pointer
         }
       }
+      .search_type {
+        width 1198px
+        margin 0 auto
+        background-color: #fafafa;
+        box-shadow: 0px 0px 13px 1px rgba(2, 2, 2, 0.16);
+        border: solid 1px #dcdcdc;
+        margin-bottom 20px
+      }
+  
     }
   }
-
-
+  
   .login-header {
     width: 100%;
     height: 130px;
@@ -1008,7 +1128,7 @@
       }
     }
     
-    .search_type {
+    /*.search_type {
       width 1198px
       margin 0 auto
       background-color: #fafafa;
@@ -1016,7 +1136,7 @@
       border: solid 1px #dcdcdc;
       margin-top 20px
     }
-    
+    */
     .case_list {
       width 1200px
       margin 0 auto
