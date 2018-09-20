@@ -629,7 +629,17 @@
         })
       },
       getDetails(apiKey,assetId){
-      console.log(apiKey,assetId)
+          axios({
+            method: "GET",
+            url: `${baseURL}/v1/asset/redirect/${apiKey}/${assetId}`,
+            headers: {
+              "Content-Type": "application/json",
+            }
+          }).then((res) => {
+            window.open(res.data.url)
+          }).catch((err) => {
+            console.log(err);
+          })
       },
       getReportDetails(val) {
         this.$store.commit("changeReportDetails", _.find(this.searchList, function (o) {
