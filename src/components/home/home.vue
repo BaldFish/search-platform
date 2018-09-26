@@ -744,8 +744,6 @@
 
 <style scoped lang="stylus">
   .home{
-/*    width 1200px
-    margin: 0 auto*/
     .search {
       width: 100%;
       background-color: #ffffff;
@@ -754,21 +752,20 @@
         box-sizing border-box
         width: 1200px
         margin: 0 auto
-        padding-bottom 20px
         .tab-change {
           display inline-block
           height: 50px
           margin: 0 auto
           margin-left 30px
-          .tab-tips {
+          /*.tab-tips {
             font-size: 16px;
             color: #666666;
             display inline-block
             line-height: 50px
-          }
+          }*/
           ul {
             height: 50px;
-            float right
+            float left
             li {
               float left
               width: 160px;
@@ -796,7 +793,7 @@
               }
             }
           }
-          .more-search {
+          /*.more-search {
             font-size: 13px;
             color: #666;
             position: relative;
@@ -807,7 +804,7 @@
             img {
               margin-right 6px
             }
-          }
+          }*/
         }
         .search_type {
           box-sizing border-box
@@ -816,8 +813,6 @@
           background-color: #fafafa;
           box-shadow: 0px 0px 13px 1px rgba(2, 2, 2, 0.16);
           border: solid 1px #dcdcdc;
-          //margin-bottom 20px
-          //padding-bottom 20px
         }
         .search-box {
           width: 1040px
@@ -1149,6 +1144,12 @@
           box-shadow: 0px 0px 13px 1px rgba(218, 44, 89, 0.4);
         }
       }
+    }
+    .paging {
+      width: 1080px;
+      margin: 0 auto;
+      text-align: center
+      margin-bottom 20px
     }
   }
 </style>
