@@ -118,7 +118,7 @@
                 </el-option>
               </el-select>
             </template>
-        
+          
           </div>
         </div>
         <div class="search-box" v-if="!isReport">
@@ -248,7 +248,7 @@
             <span>更多搜索</span>
           </div>-->
       </div>
-      <div class="fr buy-all"  v-if="isAll">
+      <div class="fr buy-all" v-if="isAll">
           <span class="buy-tips">
             为您找到相关结果<span>{{totalCount}}</span>条，本次显示 <span>{{total}}</span>条
           </span>
@@ -263,9 +263,9 @@
             </el-option>
           </el-select>
         </template>
-        <button type="button" class="buy-btn">一键认购</button>
+        <button type="button" class="buy-btn" @click="bulkBuy()">一键认购</button>
       </div>
-      <div class="case_list" >
+      <div class="case_list">
         <div v-for="(item,index) of searchList" :key="item.id" @click="getDetails(item.apikey,item.assetid)">
           <div class="fr_case" v-if="item.apikey==='5a6be74a55aaf50001a5e250'">
             <h4><a href="javascript:void(0)" v-html="item.assetname"></a></h4>
@@ -295,8 +295,8 @@
             <!--<div :class="item.shopcart_id?'like':'dislike'" @click="toggleLike(item.id)">收藏</div>-->
             <div class="price_box">
               <a href="javascript:void(0)"><p class="price">{{item.price}}</p></a>
-              <!-- <a href="/caseSource" @click="getCaseSource(item.id)"><p class="tracing">可信溯源</p></a>
-               <a href="javascript:void(0)" @click="buy(item.id)"><p class="buy">一键购买</p></a>-->
+              <!--<a href="/caseSource" @click="getCaseSource(item.id)"><p class="tracing">可信溯源</p></a>-->
+              <!--<a href="javascript:void(0)" @click="buy(item.id)"><p class="buy">一键购买</p></a>-->
             </div>
             <div class="bar"></div>
           </div>
@@ -309,20 +309,20 @@
             </div>
             <div>
               <div class="putaway putaway-report">
-                <a class="time" href="javascript:void(0)" @click="getReportDetails(item.id)"><span>报告生成时间：</span>{{item.generate_time}}</a>
-                <a class="data" href="javascript:void(0)" @click="getReportDetails(item.id)"><span>数据来源：</span>{{item.resource}}</a>
+                <a class="time" href="javascript:void(0)"><span>报告生成时间：</span>{{item.generate_time}}</a>
+                <a class="data" href="javascript:void(0)"><span>数据来源：</span>{{item.resource}}</a>
               </div>
               <div class="putaway putaway-report">
-                <a class="vin" href="javascript:void(0)" @click="getReportDetails(item.id)"><span>VIN码：</span>{{item.vin}}</a>
-                <a class="breakdown" href="javascript:void(0)" @click="getReportDetails(item.id)"><span>故障码个数：</span>{{item.fault_n}}个</a>
-                <a class="equity" href="javascript:void(0)" @click="getReportDetails(item.id)"><span>权益：</span>{{item.sell_type}}</a>
+                <a class="vin" href="javascript:void(0)"><span>VIN码：</span>{{item.vin}}</a>
+                <a class="breakdown" href="javascript:void(0)"><span>故障码个数：</span>{{item.fault_n}}个</a>
+                <a class="equity" href="javascript:void(0)"><span>权益：</span>{{item.sell_type}}</a>
               </div>
             </div>
             <!--<div :class="item.shopcart_id?'like':'dislike'" @click="toggleLike(item.id)">收藏</div>-->
             <div class="price_box">
               <a href="javascript:void(0)"><p class="price">{{item.price}}</p></a>
-              <!-- <a href="/caseSource" @click="getCaseSource(item.id)"><p class="tracing">可信溯源</p></a>
-               <a href="javascript:void(0)" @click="buy(item.id)"><p class="buy">一键购买</p></a>-->
+              <!--<a href="/caseSource" @click="getCaseSource(item.id)"><p class="tracing">可信溯源</p></a>-->
+              <!--<a href="javascript:void(0)" @click="buy(item.id)"><p class="buy">一键购买</p></a>-->
             </div>
             <div class="bar"></div>
           </div>
@@ -348,84 +348,89 @@
   import {baseURL, cardURL} from '@/common/js/public.js';
   import utils from "@/common/js/utils.js";
   import {pca, pcaa} from 'area-data';
+
+  const querystring = require('querystring');
   
   export default {
     name: "home",
     components: {},
-    data() {return {
-      page: 1,
-      limit: 10,
-      total: 10,
-      totalCount:"",
-      input: "",
-      searchType:"全部",
-      isAll:false,
-      isReport: true,
-      toggleIndex: 0,
-      toggleParam: ["搜索","交易平台", "转让平台"],
-      isLogin: false,
-      switchover: false,
-      userName: "",
-      isTopAll:true,
-      isTopCase:false,
-      isTopReport:false,
-      territoryInput: [],
-      dateInput: ["", ""],
-      idInput: "",
-      technicianInput: "",
-      vinInput: "",
-      facilityInput: "",
-      pca: pca,
-      searchList: [],
-      userId: "",
-      token: "",
-      apiKey: "",
-      assetId: "",
-      id: "",
-      searchField: ["诊断报告", "维修案例"],
-      options: [{
-        value: '选项1',
-        label: '一汽大众'
-      }, {
-        value: '选项2',
-        label: '本田'
-      }, {
-        value: '选项3',
-        label: '宝马'
-      }, {
-        value: '选项4',
-        label: '广汽传祺'
-      }, {
-        value: '选项5',
-        label: '雪佛莱'
-      }],
-      value1: '',
-      value2: '',
-      value3: '',
-      value4: '',
-      value5: '',
-      number: [{
-        value: '1001',
-        label: '全部'
-      }, {
-        value: '1000',
-        label: '1000'
-      },],
-      buyCount: '1001',
-      animate:false,
-      items:[
-        {name:"百万积分大派送！"},
-        {name:"百万积分大派送， 今秋送好礼！"},
-        {name:"百万积分大派送， 微信支付送等额可信积分！"}
-      ]
-    }},
-    created(){
-      setInterval(this.scroll,2000)
+    data() {
+      return {
+        page: 1,
+        limit: 10,
+        total: 10,
+        totalCount: "",
+        input: "",
+        searchType: "全部",
+        isAll: false,
+        isReport: true,
+        toggleIndex: 0,
+        toggleParam: ["搜索", "交易平台", "转让平台"],
+        isLogin: false,
+        switchover: false,
+        userName: "",
+        isTopAll: true,
+        isTopCase: false,
+        isTopReport: false,
+        territoryInput: [],
+        dateInput: ["", ""],
+        idInput: "",
+        technicianInput: "",
+        vinInput: "",
+        facilityInput: "",
+        pca: pca,
+        searchList: [],
+        userId: "",
+        token: "",
+        apiKey: "",
+        assetId: "",
+        id: "",
+        searchField: ["诊断报告", "维修案例"],
+        options: [{
+          value: '选项1',
+          label: '一汽大众'
+        }, {
+          value: '选项2',
+          label: '本田'
+        }, {
+          value: '选项3',
+          label: '宝马'
+        }, {
+          value: '选项4',
+          label: '广汽传祺'
+        }, {
+          value: '选项5',
+          label: '雪佛莱'
+        }],
+        value1: '',
+        value2: '',
+        value3: '',
+        value4: '',
+        value5: '',
+        number: [{
+          value: '3',
+          label: '全部'
+        }, {
+          value: '2',
+          label: '2'
+        },],
+        buyCount: '3',
+        animate: false,
+        items: [
+          {name: "百万积分大派送！"},
+          {name: "百万积分大派送， 今秋送好礼！"},
+          {name: "百万积分大派送， 微信支付送等额可信积分！"}
+        ]
+      }
+    },
+    created() {
+      setInterval(this.scroll, 2000)
     },
     mounted() {
       if (JSON.parse(sessionStorage.getItem("loginInfo"))) {
         this.userId = JSON.parse(sessionStorage.getItem("loginInfo")).user_id;
         this.token = JSON.parse(sessionStorage.getItem("loginInfo")).token;
+        console.log(1)
       }
       this.acquireSearchAllList();
     },
@@ -450,75 +455,75 @@
       },
     },
     methods: {
-      scroll(){
-        this.animate=true;    // 因为在消息向上滚动的时候需要添加css3过渡动画，所以这里需要设置true
-        setTimeout(()=>{      //  这里直接使用了es6的箭头函数，省去了处理this指向偏移问题，代码也比之前简化了很多
+      scroll() {
+        this.animate = true;    // 因为在消息向上滚动的时候需要添加css3过渡动画，所以这里需要设置true
+        setTimeout(() => {      //  这里直接使用了es6的箭头函数，省去了处理this指向偏移问题，代码也比之前简化了很多
           this.items.push(this.items[0]);  // 将数组的第一个元素添加到数组的
           this.items.shift();               //删除数组的第一个元素
-          this.animate=false;  // margin-top 为0 的时候取消过渡动画，实现无缝滚动
-        },500)
+          this.animate = false;  // margin-top 为0 的时候取消过渡动画，实现无缝滚动
+        }, 500)
       },
       //搜索诊断报告
       reportSearch() {
-        this.$set(this.$refs.radioTop,'checked',true)
+        this.$set(this.$refs.radioTop, 'checked', true)
         //this.$refs.radioTop.checked=true
-        this.isAll=true;
+        this.isAll = true;
         this.isReport = true;
-        this.isTopAll=false;
-        this.isTopReport=true;
-        this.isTopCase=false;
-        this.searchType==="诊断报告"
+        this.isTopAll = false;
+        this.isTopReport = true;
+        this.isTopCase = false;
+        this.searchType === "诊断报告"
         this.acquireSearchReportList()
       },
       //搜索维修案例
-      caseSearch(){
-        this.isAll=true;
+      caseSearch() {
+        this.isAll = true;
         this.isReport = false;
-        this.isTopAll=false;
-        this.isTopReport=false;
-        this.isTopCase=true;
-        this.searchType==="维修案例"
+        this.isTopAll = false;
+        this.isTopReport = false;
+        this.isTopCase = true;
+        this.searchType === "维修案例"
         this.acquireSearchCaseList()
       },
       //顶部类型切换更改显示内容并执行搜索
       toggleSearch(val) {
-        this.page=1;
-        this.isAll=true;
-        if(val==="诊断报告"){
+        this.page = 1;
+        this.isAll = true;
+        if (val === "诊断报告") {
           this.isReport = true;
-          this.isTopAll=false;
-          this.isTopReport=true;
-          this.isTopCase=false;
-          this.searchType==="诊断报告"
+          this.isTopAll = false;
+          this.isTopReport = true;
+          this.isTopCase = false;
+          this.searchType === "诊断报告"
           this.acquireSearchReportList()
-        } else if(val === "维修案例"){
+        } else if (val === "维修案例") {
           this.isReport = false;
-          this.isTopAll=false;
-          this.isTopReport=false;
-          this.isTopCase=true;
-          this.searchType==="维修案例"
+          this.isTopAll = false;
+          this.isTopReport = false;
+          this.isTopCase = true;
+          this.searchType === "维修案例"
           this.acquireSearchCaseList()
         }
       },
       //最新上架资产按类型切换筛查
       toggleFiltrate(val) {
-        this.page=1;
-        this.isAll=true;
+        this.page = 1;
+        this.isAll = true;
         if (val === "诊断报告") {
-          this.searchType==="诊断报告"
+          this.searchType === "诊断报告"
           this.acquireSearchReportList();
-        } else if(val === "维修案例"){
-          this.searchType==="维修案例"
+        } else if (val === "维修案例") {
+          this.searchType === "维修案例"
           this.acquireSearchCaseList();
         }
       },
       //分页获取相对应的列表
-      pagingSearch(){
-        if(this.searchType==="全部"){
+      pagingSearch() {
+        if (this.searchType === "全部") {
           this.acquireSearchAllList();
-        }else if(this.searchType==="诊断报告"){
+        } else if (this.searchType === "诊断报告") {
           this.acquireSearchReportList();
-        }else if(this.searchType==="维修案例"){
+        } else if (this.searchType === "维修案例") {
           this.acquireSearchCaseList();
         }
       },
@@ -596,7 +601,7 @@
           console.log(err);
         })
       },
-      getDetails(apiKey,assetId){
+      getDetails(apiKey, assetId) {
         axios({
           method: "GET",
           url: `${baseURL}/v1/asset/redirect/${apiKey}/${assetId}`,
@@ -604,21 +609,21 @@
             "Content-Type": "application/json",
           }
         }).then((res) => {
-          window.open(res.data.url)
+          window.open(res.data.url, "_blank")
         }).catch((err) => {
           console.log(err);
         })
       },
-      getReportDetails(val) {
+      /*getReportDetails(val) {
         this.$store.commit("changeReportDetails", _.find(this.searchList, function (o) {
           return o.id === val
         }));
-      },
-      getCaseDetails(val) {
-        this.$store.commit("changeCaseDetails",_.find(this.searchList,function (o) {
-          return o.id===val
+      },*/
+      /*getCaseDetails(val) {
+        this.$store.commit("changeCaseDetails", _.find(this.searchList, function (o) {
+          return o.id === val
         }));
-      },
+      },*/
       handleCurrentChange(val) {
         this.page = val;
         this.pagingSearch()
@@ -634,27 +639,28 @@
         }).catch(() => {
         });
       },
-      /*buy(val) {
+      //批量购买创建订单
+      bulkBuy(val) {
         if (JSON.parse(sessionStorage.getItem("loginInfo"))) {
-          let buyInfoObj = _.find(this.searchReportList, function (o) {
-            return o.id === val
-          });
+          let buyInfoObj = this.searchList[0];
           this.apiKey = buyInfoObj.apikey;
           this.assetId = buyInfoObj.assetid;
           let data = {};
-          data.nums = 1;
+          data.nums = this.buyCount;
           axios({
             method: "POST",
-            url: `${baseURL}/v1/order/${this.userId}/${this.apiKey}/${this.assetId}`,
+            url: `${baseURL}/v1/order/${this.userId}/${this.apiKey}/${this.assetId}?tag=1`,
             headers: {
               "Content-Type": "application/x-www-form-urlencoded",
               "X-Access-Token": this.token,
             },
             data: querystring.stringify(data),
           }).then((res) => {
-            buyInfoObj = res.data;
+            //window.open(res.data.judge_url)
+            window.open(`http://localhost:5000/checkOrder?order_id=${res.data.orderNum}`)
+            /*buyInfoObj = res.data;
             this.getBuy(buyInfoObj);
-            this.$router.push("/checkOrder")
+            this.$router.push("/checkOrder")*/
           }).catch((err) => {
             console.log(err);
           })
@@ -662,7 +668,7 @@
           this.open()
         }
       },
-      getBuy(val) {
+      /*getBuy(val) {
         this.$store.commit("changeBuy", val);
       },
       toggleLike(val) {
@@ -743,7 +749,7 @@
 </script>
 
 <style scoped lang="stylus">
-  .home{
+  .home {
     .search {
       width: 100%;
       background-color: #ffffff;
@@ -756,8 +762,7 @@
           display inline-block
           height: 50px
           margin: 0 auto
-          margin-left 30px
-          /*.tab-tips {
+          margin-left 30px /*.tab-tips {
             font-size: 16px;
             color: #666666;
             display inline-block
@@ -856,7 +861,7 @@
         }
       }
     }
-  
+    
     .searchReport {
       width 1200px
       margin 0 auto
@@ -1195,18 +1200,21 @@
       }
     }
   }
-  #box{
+  
+  #box {
     width: 300px;
     height: 32px;
     overflow: hidden;
     padding-left: 30px;
     border: 1px solid black;
   }
-  .anim{
+  
+  .anim {
     transition: all 0.5s;
     margin-top: -30px;
   }
-  #con1 li{
+  
+  #con1 li {
     list-style: none;
     height: 30px;
   }

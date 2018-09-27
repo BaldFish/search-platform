@@ -102,6 +102,7 @@
   import axios from "axios";
   import utils from "@/common/js/utils.js";
   
+  
   export default {
     name: 'App',
     components: {},
@@ -141,11 +142,13 @@
             let loginInfo = {};
             loginInfo.token = token;
             loginInfo.user_id = res.data.user_id;
-            loginInfo._id = res.data._id;
             window.sessionStorage.setItem("loginInfo", JSON.stringify(loginInfo));
             if (JSON.parse(sessionStorage.getItem("loginInfo"))) {
-              this.isLogin = true;
+              this.userId=JSON.parse(sessionStorage.getItem("loginInfo")).user_id;
+              this.token=JSON.parse(sessionStorage.getItem("loginInfo")).token;
               this.userName = JSON.parse(sessionStorage.getItem("userInfo")).phone
+              this.isLogin = true;
+              this.acquireFavoriteCount();
             } else {
               this.isLogin = false
             }
@@ -159,6 +162,13 @@
       } else {
         sessionStorage.removeItem('loginInfo');
         sessionStorage.removeItem('userInfo');
+      }
+    },
+    /*mounted() {
+      if (sessionStorage.getItem("loginInfo")) {
+        this.userId = JSON.parse(sessionStorage.getItem("loginInfo")).user_id;
+        this.token = JSON.parse(sessionStorage.getItem("loginInfo")).token;
+        this.acquireFavoriteCount();
       }
     },
     beforeUpdate() {
@@ -194,14 +204,7 @@
         sessionStorage.removeItem('loginInfo');
         sessionStorage.removeItem('userInfo');
       }
-    },
-    mounted() {
-      if (sessionStorage.getItem("loginInfo")) {
-        this.userId = JSON.parse(sessionStorage.getItem("loginInfo")).user_id;
-        this.token = JSON.parse(sessionStorage.getItem("loginInfo")).token;
-        this.acquireFavoriteCount();
-      }
-    },
+    },*/
     computed: {
       favoriteCount: function () {
         return this.$store.state.favoriteCount
@@ -253,8 +256,10 @@
         }).then(res => {
           sessionStorage.removeItem('loginInfo');
           sessionStorage.removeItem('userInfo');
-          document.cookie = `token=;expires=${new Date(0)};domain=.launchain.org`;
-          document.cookie = `user_id=;expires=${new Date(0)};domain=.launchain.org`;
+          document.cookie = `token=;expires=${new Date(0)}`;
+          document.cookie = `user_id=;expires=${new Date(0)}`;
+          /*document.cookie = `token=;expires=${new Date(0)};domain=.launchain.org`;
+          document.cookie = `user_id=;expires=${new Date(0)};domain=.launchain.org`;*/
           this.switchover = false;
           location.reload()
         }).catch(error => {
