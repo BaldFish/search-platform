@@ -295,8 +295,8 @@
             <!--<div :class="item.shopcart_id?'like':'dislike'" @click="toggleLike(item.id)">收藏</div>-->
             <div class="price_box">
               <a href="javascript:void(0)"><p class="price">{{item.price}}</p></a>
-              <!--<a href="/caseSource" @click="getCaseSource(item.id)"><p class="tracing">可信溯源</p></a>-->
-              <!--<a href="javascript:void(0)" @click="buy(item.id)"><p class="buy">一键购买</p></a>-->
+              <a href="/caseSource" @click="getCaseSource(item.id)"><p class="tracing">可信溯源</p></a>
+              <a href="javascript:void(0)" @click.stop="buy(item.id)"><p class="buy">一键购买</p></a>
             </div>
             <div class="bar"></div>
           </div>
@@ -321,8 +321,8 @@
             <!--<div :class="item.shopcart_id?'like':'dislike'" @click="toggleLike(item.id)">收藏</div>-->
             <div class="price_box">
               <a href="javascript:void(0)"><p class="price">{{item.price}}</p></a>
-              <!--<a href="/caseSource" @click="getCaseSource(item.id)"><p class="tracing">可信溯源</p></a>-->
-              <!--<a href="javascript:void(0)" @click="buy(item.id)"><p class="buy">一键购买</p></a>-->
+              <a href="/caseSource" @click="getCaseSource(item.id)"><p class="tracing">可信溯源</p></a>
+              <a href="javascript:void(0)" @click.stop="buy(item.id)"><p class="buy">一键购买</p></a>
             </div>
             <div class="bar"></div>
           </div>
@@ -430,7 +430,6 @@
       if (JSON.parse(sessionStorage.getItem("loginInfo"))) {
         this.userId = JSON.parse(sessionStorage.getItem("loginInfo")).user_id;
         this.token = JSON.parse(sessionStorage.getItem("loginInfo")).token;
-        console.log(1)
       }
       this.acquireSearchAllList();
     },
@@ -609,7 +608,8 @@
             "Content-Type": "application/json",
           }
         }).then((res) => {
-          window.open(res.data.url, "_blank")
+          window.open(`http://localhost:5000/caseDetails?apikey=${apiKey}&assetid=${assetId}`, "_blank")
+          //window.open(res.data.url, "_blank")
         }).catch((err) => {
           console.log(err);
         })
@@ -645,6 +645,7 @@
           let buyInfoObj = this.searchList[0];
           this.apiKey = buyInfoObj.apikey;
           this.assetId = buyInfoObj.assetid;
+          this.userId = JSON.parse(sessionStorage.getItem("loginInfo")).user_id;
           let data = {};
           data.nums = this.buyCount;
           axios({
@@ -658,9 +659,6 @@
           }).then((res) => {
             //window.open(res.data.judge_url)
             window.open(`http://localhost:5000/checkOrder?order_id=${res.data.orderNum}`)
-            /*buyInfoObj = res.data;
-            this.getBuy(buyInfoObj);
-            this.$router.push("/checkOrder")*/
           }).catch((err) => {
             console.log(err);
           })
@@ -668,10 +666,38 @@
           this.open()
         }
       },
-      /*getBuy(val) {
+      buy(val){
+        if (JSON.parse(sessionStorage.getItem("loginInfo"))) {
+          let buyInfoObj = _.find(this.searchList,function (o) {
+            return o.id===val
+          });
+          this.apiKey = buyInfoObj.apikey;
+          this.assetId = buyInfoObj.assetid;
+          this.userId = JSON.parse(sessionStorage.getItem("loginInfo")).user_id;
+          let data = {};
+          data.nums = 1;
+          axios({
+            method: "POST",
+            url: `${baseURL}/v1/order/${this.userId}/${this.apiKey}/${this.assetId}`,
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+              "X-Access-Token": this.token,
+            },
+            data: querystring.stringify(data),
+          }).then((res) => {
+            //window.open(res.data.judge_url)
+            window.open(`http://localhost:5000/checkOrder?order_id=${res.data.orderNum}`)
+          }).catch((err) => {
+            console.log(err);
+          })
+        } else {
+          this.open()
+        }
+      },
+      getBuy(val) {
         this.$store.commit("changeBuy", val);
       },
-      toggleLike(val) {
+      /*toggleLike(val) {
         if (sessionStorage.getItem("loginInfo")) {
           let likeInfo = _.find(this.searchReportList, function (o) {
             return o.id === val
@@ -712,11 +738,11 @@
         } else {
           this.open()
         }
-      },
-      addCollection() {
+      },*/
+      /*addCollection() {
         this.$store.commit("addCollection")
-      },
-      subtractCollection() {
+      },*/
+      /*subtractCollection() {
         this.$store.commit("subtractCollection")
       },*/
       dropOut() {
@@ -730,8 +756,10 @@
         }).then(res => {
           sessionStorage.removeItem('loginInfo');
           sessionStorage.removeItem('userInfo');
-          utils.unsetCookie("token");
-          utils.unsetCookie("user_id");
+          document.cookie = `token=;expires=${new Date(0)}`;
+          document.cookie = `user_id=;expires=${new Date(0)}`;
+          /*document.cookie = `token=;expires=${new Date(0)};domain=.launchain.org`;
+          document.cookie = `user_id=;expires=${new Date(0)};domain=.launchain.org`;*/
           this.switchover = false;
           location.reload()
         }).catch(error => {
@@ -762,7 +790,8 @@
           display inline-block
           height: 50px
           margin: 0 auto
-          margin-left 30px /*.tab-tips {
+          margin-left 30px
+          /*.tab-tips {
             font-size: 16px;
             color: #666666;
             display inline-block
