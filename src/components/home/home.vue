@@ -608,8 +608,8 @@
             "Content-Type": "application/json",
           }
         }).then((res) => {
-          window.open(`http://localhost:5000/caseDetails?apikey=${apiKey}&assetid=${assetId}`, "_blank")
-          //window.open(res.data.url, "_blank")
+          //window.open(`http://localhost:5000/caseDetails?apikey=${apiKey}&assetid=${assetId}`, "_blank")
+          window.open(res.data.url, "_blank")
         }).catch((err) => {
           console.log(err);
         })
@@ -657,8 +657,8 @@
             },
             data: querystring.stringify(data),
           }).then((res) => {
-            //window.open(res.data.judge_url)
-            window.open(`http://localhost:5000/checkOrder?order_id=${res.data.orderNum}`)
+            window.open(res.data.judge_url)
+            //window.open(`http://localhost:5000/checkOrder?order_id=${res.data.orderNum}`)
           }).catch((err) => {
             console.log(err);
           })
@@ -685,8 +685,8 @@
             },
             data: querystring.stringify(data),
           }).then((res) => {
-            //window.open(res.data.judge_url)
-            window.open(`http://localhost:5000/checkOrder?order_id=${res.data.orderNum}`)
+            window.open(res.data.judge_url)
+            //window.open(`http://localhost:5000/checkOrder?order_id=${res.data.orderNum}`)
           }).catch((err) => {
             console.log(err);
           })
@@ -756,10 +756,10 @@
         }).then(res => {
           sessionStorage.removeItem('loginInfo');
           sessionStorage.removeItem('userInfo');
-          document.cookie = `token=;expires=${new Date(0)}`;
-          document.cookie = `user_id=;expires=${new Date(0)}`;
-          /*document.cookie = `token=;expires=${new Date(0)};domain=.launchain.org`;
-          document.cookie = `user_id=;expires=${new Date(0)};domain=.launchain.org`;*/
+          /*document.cookie = `token=;expires=${new Date(0)}`;
+          document.cookie = `user_id=;expires=${new Date(0)}`;*/
+          document.cookie = `token=;expires=${new Date(0)};domain=.launchain.org`;
+          document.cookie = `user_id=;expires=${new Date(0)};domain=.launchain.org`;
           this.switchover = false;
           location.reload()
         }).catch(error => {
