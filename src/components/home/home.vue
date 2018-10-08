@@ -11,7 +11,7 @@
           </ul>-->
           <ul>
             <li>
-              <input type="radio" name="radioTop" @click.stop="toggleSearch('诊断报告')" ref="radioTop">
+              <input type="radio" name="radioTop" @click.stop="toggleSearch('诊断报告')" ref="radioTop" checked>
               <div class="radio-box"><p>{{'诊断报告'}}</p></div>
             </li>
             <li>
@@ -28,17 +28,15 @@
           <div style="float: left">
             <div class="type_territory">
               <span class="type_span">省市：</span>
-              <area-select class="territory_input" v-model="territoryInput" :data="pca" type="text" @change="reportSearch"></area-select>
+              <area-select class="territory_input" v-model="territoryInput" :data="pca" type="text"></area-select>
             </div>
             <div class="type_vin">
               <span class="type_span">数据上链ID：</span>
-              <el-input class="vin_input" v-model="idInput" placeholder="请输入上链ID" size="small" style="width:334px"
-                        @change="reportSearch"></el-input>
+              <el-input class="vin_input" v-model="idInput" placeholder="请输入上链ID" size="small" style="width:334px"></el-input>
             </div>
             <div class="type_vin">
               <span class="type_span">VIN码：</span>
-              <el-input class="vin_input" v-model="vinInput" placeholder="请输入VIN" size="small" style="width:334px"
-                        @change="reportSearch"></el-input>
+              <el-input class="vin_input" v-model="vinInput" placeholder="请输入VIN" size="small" style="width:334px"></el-input>
             </div>
           </div>
           <div>
@@ -46,18 +44,16 @@
               <span class="type_span">时间：</span>
               <el-date-picker class="date_input" v-model="dateInput" type="daterange" range-separator="至" start-placeholder="开始日期"
                               end-placeholder="结束日期"
-                              format="yyyy-MM-dd" default-value="2018-01-01" size="small" @change="reportSearch">
+                              format="yyyy-MM-dd" default-value="2018-01-01" size="small">
               </el-date-picker>
             </div>
             <div class="type_vin">
               <span class="type_span">技师号：</span>
-              <el-input class="vin_input" v-model="technicianInput" placeholder="请输入技师号" size="small" style="width:334px"
-                        @change="reportSearch"></el-input>
+              <el-input class="vin_input" v-model="technicianInput" placeholder="请输入技师号" size="small" style="width:334px"></el-input>
             </div>
             <div class="type_vin">
               <span class="type_span">诊断设备号：</span>
-              <el-input class="vin_input" v-model="facilityInput" placeholder="请输入诊断设备号" size="small" style="width:334px"
-                        @change="reportSearch"></el-input>
+              <el-input class="vin_input" v-model="facilityInput" placeholder="请输入诊断设备号" size="small" style="width:334px"></el-input>
             </div>
           </div>
           <div style="clear:both"></div>
@@ -69,8 +65,7 @@
                   v-for="item in options"
                   :key="item.value"
                   :label="item.label"
-                  :value="item.value"
-                  @change="reportSearch">
+                  :value="item.value">
                 </el-option>
               </el-select>
             </template>
@@ -80,8 +75,7 @@
                   v-for="item in options"
                   :key="item.value"
                   :label="item.label"
-                  :value="item.value"
-                  @change="reportSearch">
+                  :value="item.value">
                 </el-option>
               </el-select>
             </template>
@@ -91,8 +85,7 @@
                   v-for="item in options"
                   :key="item.value"
                   :label="item.label"
-                  :value="item.value"
-                  @change="reportSearch">
+                  :value="item.value">
                 </el-option>
               </el-select>
             </template>
@@ -102,8 +95,7 @@
                   v-for="item in options"
                   :key="item.value"
                   :label="item.label"
-                  :value="item.value"
-                  @change="reportSearch">
+                  :value="item.value">
                 </el-option>
               </el-select>
             </template>
@@ -113,15 +105,14 @@
                   v-for="item in options"
                   :key="item.value"
                   :label="item.label"
-                  :value="item.value"
-                  @change="reportSearch">
+                  :value="item.value">
                 </el-option>
               </el-select>
             </template>
           
           </div>
         </div>
-        <div class="search-box" v-if="!isReport">
+        <div class="search-box" v-if="isCase">
           <div class="search-input">
             <input type="text" v-model="input" placeholder="请输入你想要的商品名称" @keyup.enter="caseSearch">
           </div>
@@ -234,21 +225,29 @@
         </div>
       </div>-->
       <div class="tab-change">
-        <span class="tab-tips" v-if="isTopAll">最新上架资产：</span>
-        <ul v-if="isTopAll">
-          <li v-for="(item,index) of searchField">
-            <input type="radio" name="radioFiltrate" @click="toggleFiltrate(item)">
-            <div class="radio-box"><p>{{item}}</p></div>
+        <span class="tab-tips" v-if="newAsset">最新上架资产：</span>
+        <ul v-if="newAsset">
+          <li>
+            <input type="radio" name="radioFiltrate" @click="toggleFiltrate('全部')" checked>
+            <div class="radio-box"><p>全部</p></div>
+          </li>
+          <li>
+            <input type="radio" name="radioFiltrate" @click="toggleFiltrate('诊断报告')">
+            <div class="radio-box"><p>诊断报告</p></div>
+          </li>
+          <li>
+            <input type="radio" name="radioFiltrate" @click="toggleFiltrate('维修案例')">
+            <div class="radio-box"><p>维修案例</p></div>
           </li>
         </ul>
-        <span class="tab-tips" v-if="isTopReport">诊断报告</span>
-        <span class="tab-tips" v-if="isTopCase">维修案例</span>
+        <span class="tab-tips" v-if="searchResult">搜索结果：{{searchType}}诊断报告</span>
+        <!--<span class="tab-tips" v-if="isTopCase">搜索结果：{{searchType}}维修案例</span>-->
         <!--  <div class="more-search">
             <img src="@/components/searchReport/images/more.png" alt="">
             <span>更多搜索</span>
           </div>-->
       </div>
-      <div class="fr buy-all" v-if="isAll">
+      <div class="fr buy-all" v-if="bulkBuying">
           <span class="buy-tips">
             为您找到相关结果<span>{{totalCount}}</span>条，本次显示 <span>{{total}}</span>条
           </span>
@@ -348,7 +347,7 @@
   import {baseURL, cardURL} from '@/common/js/public.js';
   import utils from "@/common/js/utils.js";
   import {pca, pcaa} from 'area-data';
-
+  
   const querystring = require('querystring');
   
   export default {
@@ -362,16 +361,21 @@
         totalCount: "",
         input: "",
         searchType: "全部",
-        isAll: false,
+        bulkBuying:false,
+        searchResult:false,
+        newAsset:true,
         isReport: true,
-        toggleIndex: 0,
+        isCase: false,
+        /*toggleIndex: 0,
         toggleParam: ["搜索", "交易平台", "转让平台"],
         isLogin: false,
         switchover: false,
         userName: "",
+        searchField: ["全部", "诊断报告", "维修案例"],
+        isAll: false,
         isTopAll: true,
         isTopCase: false,
-        isTopReport: false,
+        isTopReport: false,*/
         territoryInput: [],
         dateInput: ["", ""],
         idInput: "",
@@ -385,7 +389,6 @@
         apiKey: "",
         assetId: "",
         id: "",
-        searchField: ["诊断报告", "维修案例"],
         options: [{
           value: '选项1',
           label: '一汽大众'
@@ -464,14 +467,14 @@
       },
       //搜索诊断报告
       reportSearch() {
-        this.$set(this.$refs.radioTop, 'checked', true)
+        //this.$set(this.$refs.radioTop, 'checked', true)
         //this.$refs.radioTop.checked=true
         this.isAll = true;
         this.isReport = true;
         this.isTopAll = false;
         this.isTopReport = true;
         this.isTopCase = false;
-        this.searchType === "诊断报告"
+        this.searchType = "诊断报告"
         this.acquireSearchReportList()
       },
       //搜索维修案例
@@ -481,27 +484,29 @@
         this.isTopAll = false;
         this.isTopReport = false;
         this.isTopCase = true;
-        this.searchType === "维修案例"
+        this.searchType = "维修案例"
         this.acquireSearchCaseList()
       },
       //顶部类型切换更改显示内容并执行搜索
       toggleSearch(val) {
         this.page = 1;
-        this.isAll = true;
+        //this.isAll = true;
         if (val === "诊断报告") {
           this.isReport = true;
+          this.isCase = false;
           this.isTopAll = false;
           this.isTopReport = true;
           this.isTopCase = false;
-          this.searchType === "诊断报告"
-          this.acquireSearchReportList()
+          this.searchType = "诊断报告"
+          //this.acquireSearchReportList()
         } else if (val === "维修案例") {
           this.isReport = false;
+          this.isCase = true;
           this.isTopAll = false;
           this.isTopReport = false;
           this.isTopCase = true;
-          this.searchType === "维修案例"
-          this.acquireSearchCaseList()
+          this.searchType = "维修案例"
+          //this.acquireSearchCaseList()
         }
       },
       //最新上架资产按类型切换筛查
@@ -666,10 +671,10 @@
           this.open()
         }
       },
-      buy(val){
+      buy(val) {
         if (JSON.parse(sessionStorage.getItem("loginInfo"))) {
-          let buyInfoObj = _.find(this.searchList,function (o) {
-            return o.id===val
+          let buyInfoObj = _.find(this.searchList, function (o) {
+            return o.id === val
           });
           this.apiKey = buyInfoObj.apikey;
           this.assetId = buyInfoObj.assetid;
@@ -745,7 +750,7 @@
       /*subtractCollection() {
         this.$store.commit("subtractCollection")
       },*/
-      dropOut() {
+      /*dropOut() {
         let sessionsId = JSON.parse(sessionStorage.getItem("userInfo")).session_id;
         axios({
           method: 'DELETE',
@@ -756,8 +761,8 @@
         }).then(res => {
           sessionStorage.removeItem('loginInfo');
           sessionStorage.removeItem('userInfo');
-          /*document.cookie = `token=;expires=${new Date(0)}`;
-          document.cookie = `user_id=;expires=${new Date(0)}`;*/
+          /!*document.cookie = `token=;expires=${new Date(0)}`;
+          document.cookie = `user_id=;expires=${new Date(0)}`;*!/
           document.cookie = `token=;expires=${new Date(0)};domain=.launchain.org`;
           document.cookie = `user_id=;expires=${new Date(0)};domain=.launchain.org`;
           this.switchover = false;
@@ -765,13 +770,13 @@
         }).catch(error => {
           console.log(error);
         })
-      },
-      toggle() {
+      },*/
+      /*toggle() {
         this.switchover = !this.switchover
-      },
-      leaveUl() {
+      },*/
+      /*leaveUl() {
         this.switchover = false
-      },
+      },*/
     },
   }
 </script>
@@ -790,8 +795,7 @@
           display inline-block
           height: 50px
           margin: 0 auto
-          margin-left 30px
-          /*.tab-tips {
+          margin-left 30px /*.tab-tips {
             font-size: 16px;
             color: #666666;
             display inline-block
@@ -909,7 +913,7 @@
           float right
           li {
             float left
-            width: 160px;
+            width: 100px;
             height: 50px;
             line-height 50px
             font-size: 16px;
