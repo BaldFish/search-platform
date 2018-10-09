@@ -3,12 +3,6 @@
     <div class="search">
       <div class="search-container">
         <div class="tab-change">
-          <!--<ul>
-            <li v-for="(item,index) of searchField">
-              <input type="radio" name="radioTop" v-model="searchType" :value="item" @click.stop="toggleSearch(item)" ref="radioTop">
-              <div class="radio-box"><p>{{item}}</p></div>
-            </li>
-          </ul>-->
           <ul>
             <li>
               <input type="radio" name="radioTop" @click.stop="toggleSearch('诊断报告')" ref="radioTop" checked>
@@ -19,10 +13,6 @@
               <div class="radio-box"><p>{{'维修案例'}}</p></div>
             </li>
           </ul>
-          <!--  <div class="more-search">
-              <img src="@/components/searchReport/images/more.png" alt="">
-              <span>更多搜索</span>
-            </div>-->
         </div>
         <div class="search_type" v-if="isReport">
           <div style="float: left">
@@ -59,7 +49,7 @@
           <div style="clear:both"></div>
           <div class="type_vin">
             <span class="type_span">高级选项：</span>
-            <template>
+            <!--<template>
               <el-select v-model="value1" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="车厂">
                 <el-option
                   v-for="item in options"
@@ -68,9 +58,19 @@
                   :value="item.value">
                 </el-option>
               </el-select>
+            </template>-->
+            <template>
+              <el-select v-model="brand" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="车系品牌">
+                <el-option
+                  v-for="(item,index) in brandList"
+                  :key="index"
+                  :label="item"
+                  :value="item">
+                </el-option>
+              </el-select>
             </template>
             <template>
-              <el-select v-model="value2" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="车系品牌">
+              <el-select v-model="carType" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="车型">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
@@ -80,7 +80,7 @@
               </el-select>
             </template>
             <template>
-              <el-select v-model="value3" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="车型">
+              <el-select v-model="year" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="车年款">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
@@ -90,7 +90,7 @@
               </el-select>
             </template>
             <template>
-              <el-select v-model="value4" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="车年款">
+              <el-select v-model="mileage" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="里程">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
@@ -99,18 +99,8 @@
                 </el-option>
               </el-select>
             </template>
-            <template>
-              <el-select v-model="value5" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="里程">
-                <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </template>
-          
           </div>
+          <button type="button" @click="reportSearch">搜索</button>
         </div>
         <div class="search-box" v-if="isCase">
           <div class="search-input">
@@ -127,103 +117,6 @@
       </div>
     </div>
     <div class="searchReport">
-      <!--<div class="search_type" v-if="isReport">
-        <div style="float: left">
-          <div class="type_territory">
-            <span class="type_span">省市：</span>
-            <area-select class="territory_input" v-model="territoryInput" :data="pca" type="text" @change="reportSearch"></area-select>
-          </div>
-          <div class="type_vin">
-            <span class="type_span">数据上链ID：</span>
-            <el-input class="vin_input" v-model="vinInput" placeholder="请输入上链ID" size="small" style="width:334px"
-                      @change="reportSearch"></el-input>
-          </div>
-          <div class="type_vin">
-            <span class="type_span">VIN码：</span>
-            <el-input class="vin_input" v-model="vinInput" placeholder="请输入VIN" size="small" style="width:334px"
-                      @change="reportSearch"></el-input>
-          </div>
-        </div>
-        <div>
-          <div class="type_date">
-            <span class="type_span">时间：</span>
-            <el-date-picker class="date_input" v-model="dateInput" type="daterange" range-separator="至" start-placeholder="开始日期"
-                            end-placeholder="结束日期"
-                            format="yyyy-MM-dd" default-value="2018-01-01" size="small" @change="reportSearch">
-            </el-date-picker>
-          </div>
-          <div class="type_vin">
-            <span class="type_span">技师号：</span>
-            <el-input class="vin_input" v-model="vinInput" placeholder="请输入技师号" size="small" style="width:334px"
-                      @change="reportSearch"></el-input>
-          </div>
-          <div class="type_vin">
-            <span class="type_span">诊断设备号：</span>
-            <el-input class="vin_input" v-model="vinInput" placeholder="请输入诊断设备号" size="small" style="width:334px"
-                      @change="reportSearch"></el-input>
-          </div>
-        </div>
-        <div style="clear:both"></div>
-        <div class="type_vin">
-          <span class="type_span">高级选项：</span>
-          <template>
-            <el-select v-model="value1" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="车厂">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-                @change="reportSearch">
-              </el-option>
-            </el-select>
-          </template>
-          <template>
-            <el-select v-model="value2" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="车系品牌">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-                @change="reportSearch">
-              </el-option>
-            </el-select>
-          </template>
-          <template>
-            <el-select v-model="value3" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="车型">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-                @change="reportSearch">
-              </el-option>
-            </el-select>
-          </template>
-          <template>
-            <el-select v-model="value4" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="车年款">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-                @change="reportSearch">
-              </el-option>
-            </el-select>
-          </template>
-          <template>
-            <el-select v-model="value5" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="里程">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-                @change="reportSearch">
-              </el-option>
-            </el-select>
-          </template>
-          
-        </div>
-      </div>-->
       <div class="tab-change">
         <span class="tab-tips" v-if="newAsset">最新上架资产：</span>
         <ul v-if="newAsset">
@@ -240,8 +133,7 @@
             <div class="radio-box"><p>维修案例</p></div>
           </li>
         </ul>
-        <span class="tab-tips" v-if="searchResult">搜索结果：{{searchType}}诊断报告</span>
-        <!--<span class="tab-tips" v-if="isTopCase">搜索结果：{{searchType}}维修案例</span>-->
+        <span class="tab-tips" v-if="!newAsset">搜索结果：{{searchType}}</span>
         <!--  <div class="more-search">
             <img src="@/components/searchReport/images/more.png" alt="">
             <span>更多搜索</span>
@@ -362,20 +254,9 @@
         input: "",
         searchType: "全部",
         bulkBuying:false,
-        searchResult:false,
         newAsset:true,
         isReport: true,
         isCase: false,
-        /*toggleIndex: 0,
-        toggleParam: ["搜索", "交易平台", "转让平台"],
-        isLogin: false,
-        switchover: false,
-        userName: "",
-        searchField: ["全部", "诊断报告", "维修案例"],
-        isAll: false,
-        isTopAll: true,
-        isTopCase: false,
-        isTopReport: false,*/
         territoryInput: [],
         dateInput: ["", ""],
         idInput: "",
@@ -389,6 +270,13 @@
         apiKey: "",
         assetId: "",
         id: "",
+        brandList:[],
+        carTypeList:{},
+        mileageList:["0-9999万公里","1-1万公里","0-1万公里",],
+        brand:"",
+        carType:"",
+        year:"",
+        mileage:"",
         options: [{
           value: '选项1',
           label: '一汽大众'
@@ -405,19 +293,19 @@
           value: '选项5',
           label: '雪佛莱'
         }],
-        value1: '',
+        /*value1: '',
         value2: '',
         value3: '',
         value4: '',
-        value5: '',
-        number: [{
-          value: '3',
+        value5: '',*/
+        number: [/*{
+          value: '1001',
           label: '全部'
         }, {
-          value: '2',
-          label: '2'
-        },],
-        buyCount: '3',
+          value: '1000',
+          label: '1000'
+        },*/],
+        buyCount: '',
         animate: false,
         items: [
           {name: "百万积分大派送！"},
@@ -435,14 +323,9 @@
         this.token = JSON.parse(sessionStorage.getItem("loginInfo")).token;
       }
       this.acquireSearchAllList();
+      this.acquireBrandList();
     },
     computed: {
-      searchValue: function () {
-        return this.$store.state.searchValue
-      },
-      searchInput: function () {
-        return this.$store.state.searchInput
-      },
       newTerritoryInput: function () {
         if (this.territoryInput.length !== 0) {
           return this.territoryInput
@@ -451,11 +334,7 @@
         }
       }
     },
-    watch: {
-      searchInput: function () {
-        this.acquireSearchReportList();
-      },
-    },
+    watch: {},
     methods: {
       scroll() {
         this.animate = true;    // 因为在消息向上滚动的时候需要添加css3过渡动画，所以这里需要设置true
@@ -465,74 +344,63 @@
           this.animate = false;  // margin-top 为0 的时候取消过渡动画，实现无缝滚动
         }, 500)
       },
+      open() {
+        this.$confirm('此操作需要先登录, 是否登录?', '提示', {
+          confirmButtonText: '是',
+          cancelButtonText: '否',
+          type: 'warning',
+          center: true
+        }).then(() => {
+          this.$router.push("/login")
+        }).catch(() => {
+        });
+      },
       //搜索诊断报告
       reportSearch() {
         //this.$set(this.$refs.radioTop, 'checked', true)
         //this.$refs.radioTop.checked=true
-        this.isAll = true;
-        this.isReport = true;
-        this.isTopAll = false;
-        this.isTopReport = true;
-        this.isTopCase = false;
-        this.searchType = "诊断报告"
-        this.acquireSearchReportList()
+        this.page = 1;
+        this.number=[];
+        this.acquireSearchReportList();
+        this.bulkBuying=true;
+        this.newAsset=false;
       },
       //搜索维修案例
       caseSearch() {
-        this.isAll = true;
-        this.isReport = false;
-        this.isTopAll = false;
-        this.isTopReport = false;
-        this.isTopCase = true;
-        this.searchType = "维修案例"
-        this.acquireSearchCaseList()
-      },
-      //顶部类型切换更改显示内容并执行搜索
-      toggleSearch(val) {
         this.page = 1;
-        //this.isAll = true;
+        this.number=[];
+        this.acquireSearchCaseList();
+        this.bulkBuying=true;
+        this.newAsset=false;
+      },
+      //顶部搜索类型切换
+      toggleSearch(val) {
         if (val === "诊断报告") {
           this.isReport = true;
           this.isCase = false;
-          this.isTopAll = false;
-          this.isTopReport = true;
-          this.isTopCase = false;
-          this.searchType = "诊断报告"
-          //this.acquireSearchReportList()
         } else if (val === "维修案例") {
           this.isReport = false;
           this.isCase = true;
-          this.isTopAll = false;
-          this.isTopReport = false;
-          this.isTopCase = true;
-          this.searchType = "维修案例"
-          //this.acquireSearchCaseList()
         }
       },
       //最新上架资产按类型切换筛查
       toggleFiltrate(val) {
         this.page = 1;
-        this.isAll = true;
-        if (val === "诊断报告") {
-          this.searchType === "诊断报告"
-          this.acquireSearchReportList();
-        } else if (val === "维修案例") {
-          this.searchType === "维修案例"
-          this.acquireSearchCaseList();
-        }
-      },
-      //分页获取相对应的列表
-      pagingSearch() {
-        if (this.searchType === "全部") {
+        this.number=[];
+        if (val === "全部") {
           this.acquireSearchAllList();
-        } else if (this.searchType === "诊断报告") {
+          this.bulkBuying=false;
+        } else if (val === "诊断报告") {
           this.acquireSearchReportList();
-        } else if (this.searchType === "维修案例") {
+          this.bulkBuying=true;
+        }else if (val === "维修案例") {
           this.acquireSearchCaseList();
+          this.bulkBuying=true;
         }
       },
       //获取搜索所有列表
       acquireSearchAllList() {
+        this.searchType = "全部";
         axios({
           method: "GET",
           url: `${baseURL}/v1/asset/search_all?key=${this.input}&page=${this.page}&limit=${this.limit}`,
@@ -557,6 +425,7 @@
       },
       //获取搜索诊断报告列表
       acquireSearchReportList() {
+        this.searchType = "诊断报告";
         axios({
           method: "GET",
           url:
@@ -573,6 +442,7 @@
           } else {
             this.total = res.data.count;
             this.totalCount = res.data.total_count;
+            this.number=res.data.levels;
             for (let v of res.data.data) {
               v.generate_time = utils.formatDate(new Date(v.generate_time), "yyyy-MM-dd hh:mm:ss");
               v.sell_at = utils.formatDate(new Date(v.sell_at), "yyyy-MM-dd hh:mm:ss");
@@ -586,6 +456,7 @@
       },
       //获取搜索案例列表
       acquireSearchCaseList() {
+        this.searchType = "维修案例";
         axios({
           method: "GET",
           url: `${baseURL}/v1/asset/casus/search?key=${this.input}&page=${this.page}&limit=${this.limit}`,
@@ -595,6 +466,7 @@
         }).then((res) => {
           this.total = res.data.count;
           this.totalCount = res.data.total_count;
+          this.number=res.data.levels;
           for (let v of res.data.data) {
             v.sell_at = utils.formatDate(new Date(v.sell_at), "yyyy-MM-dd hh:mm:ss");
             v.assetname = utils.searchHighlight(v.assetname, this.input, "color", "#c6351e");
@@ -633,16 +505,15 @@
         this.page = val;
         this.pagingSearch()
       },
-      open() {
-        this.$confirm('此操作需要先登录, 是否登录?', '提示', {
-          confirmButtonText: '是',
-          cancelButtonText: '否',
-          type: 'warning',
-          center: true
-        }).then(() => {
-          this.$router.push("/login")
-        }).catch(() => {
-        });
+      //分页获取相对应的列表
+      pagingSearch() {
+        if (this.searchType === "全部") {
+          this.acquireSearchAllList();
+        } else if (this.searchType === "诊断报告") {
+          this.acquireSearchReportList();
+        } else if (this.searchType === "维修案例") {
+          this.acquireSearchCaseList();
+        }
       },
       //批量购买创建订单
       bulkBuy(val) {
@@ -671,6 +542,7 @@
           this.open()
         }
       },
+      //单独购买创建订单
       buy(val) {
         if (JSON.parse(sessionStorage.getItem("loginInfo"))) {
           let buyInfoObj = _.find(this.searchList, function (o) {
@@ -699,84 +571,24 @@
           this.open()
         }
       },
-      getBuy(val) {
+      /*getBuy(val) {
         this.$store.commit("changeBuy", val);
-      },
-      /*toggleLike(val) {
-        if (sessionStorage.getItem("loginInfo")) {
-          let likeInfo = _.find(this.searchReportList, function (o) {
-            return o.id === val
-          });
-          this.apiKey = likeInfo.apikey;
-          this.assetId = likeInfo.assetid;
-          if (likeInfo.shopcart_id === "") {
-            axios({
-              method: "POST",
-              url: `${baseURL}/v1/shopcart/${this.userId}/${this.apiKey}/${this.assetId}`,
-              headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "X-Access-Token": this.token
-              }
-            }).then((res) => {
-              this.id = res.data._id;
-              likeInfo.shopcart_id = this.id;
-              this.addCollection()
-            }).catch((err) => {
-              console.log(err);
-            });
-          } else if (likeInfo.shopcart_id !== "") {
-            this.id = likeInfo.shopcart_id;
-            axios({
-              method: "DELETE",
-              url: `${baseURL}/v1/shopcart/${this.userId}/${this.id}`,
-              headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "X-Access-Token": this.token
-              }
-            }).then((res) => {
-              likeInfo.shopcart_id = "";
-              this.subtractCollection()
-            }).catch((err) => {
-              console.log(err);
-            });
-          }
-        } else {
-          this.open()
-        }
       },*/
-      /*addCollection() {
-        this.$store.commit("addCollection")
-      },*/
-      /*subtractCollection() {
-        this.$store.commit("subtractCollection")
-      },*/
-      /*dropOut() {
-        let sessionsId = JSON.parse(sessionStorage.getItem("userInfo")).session_id;
+      //获取车系品牌列表
+      acquireBrandList(){
         axios({
-          method: 'DELETE',
-          url: `${baseURL}/v1/sessions/${sessionsId}`,
+          method: "GET",
+          url: `https://search-api-test.launchain.org/vehicle_brand/get_list`,
           headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
+            "Content-Type": "application/json",
           }
-        }).then(res => {
-          sessionStorage.removeItem('loginInfo');
-          sessionStorage.removeItem('userInfo');
-          /!*document.cookie = `token=;expires=${new Date(0)}`;
-          document.cookie = `user_id=;expires=${new Date(0)}`;*!/
-          document.cookie = `token=;expires=${new Date(0)};domain=.launchain.org`;
-          document.cookie = `user_id=;expires=${new Date(0)};domain=.launchain.org`;
-          this.switchover = false;
-          location.reload()
-        }).catch(error => {
-          console.log(error);
+        }).then((res) => {
+          this.brandList=res.data.brand_list
+          console.log(res);
+        }).catch((err) => {
+          console.log(err);
         })
-      },*/
-      /*toggle() {
-        this.switchover = !this.switchover
-      },*/
-      /*leaveUl() {
-        this.switchover = false
-      },*/
+      },
     },
   }
 </script>
@@ -795,7 +607,8 @@
           display inline-block
           height: 50px
           margin: 0 auto
-          margin-left 30px /*.tab-tips {
+          margin-left 30px
+          /*.tab-tips {
             font-size: 16px;
             color: #666666;
             display inline-block
@@ -851,6 +664,24 @@
           background-color: #fafafa;
           box-shadow: 0px 0px 13px 1px rgba(2, 2, 2, 0.16);
           border: solid 1px #dcdcdc;
+          position relative
+          button {
+            width: 120px;
+            height: 45px;
+            background-color: #c6351e;
+            outline: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: #fff;
+            position absolute
+            top 72px
+            right 80px
+          }
+          /*button:active {
+            background-color: #ffffff;
+            color: #d92104;
+          }*/
         }
         .search-box {
           width: 1040px
