@@ -432,6 +432,13 @@
       //获取搜索诊断报告列表
       acquireSearchReportList() {
         this.searchType = "诊断报告";
+        //加载蒙层
+        let loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
         axios({
           method: "GET",
           url:
@@ -440,6 +447,7 @@
             "Content-Type": "application/json",
           }
         }).then((res) => {
+          loading.close();//关闭蒙层
           if (res.data.data === null) {
             this.searchList = [];
             this.total = res.data.count;
@@ -463,6 +471,13 @@
       //获取搜索案例列表
       acquireSearchCaseList() {
         this.searchType = "维修案例";
+        //加载蒙层
+        let loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
         axios({
           method: "GET",
           url: `${baseURL}/v1/asset/casus/search?key=${this.input}&page=${this.page}&limit=${this.limit}`,
@@ -470,6 +485,7 @@
             "Content-Type": "application/json",
           }
         }).then((res) => {
+          loading.close();//关闭蒙层
           this.total = res.data.count;
           this.totalCount = res.data.total_count;
           this.number = res.data.levels;
