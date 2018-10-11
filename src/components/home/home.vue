@@ -253,7 +253,7 @@
         total: 10,
         totalCount: "",
         input: "",
-        searchType: "诊断报告",
+        searchType: "",
         bulkBuying: true,
         newAsset: true,
         isReport: true,
@@ -320,7 +320,7 @@
         this.userId = JSON.parse(sessionStorage.getItem("loginInfo")).user_id;
         this.token = JSON.parse(sessionStorage.getItem("loginInfo")).token;
       }
-      this.acquireSearchReportList();
+      this.acquireCacheReportList();
       //this.acquireSearchAllList();
       this.acquireBrandList();
     },
@@ -398,7 +398,7 @@
           this.acquireSearchAllList();
           this.bulkBuying = false;
         } else if (val === "诊断报告") {
-          this.acquireSearchReportList();
+          this.acquireCacheReportList();
           this.bulkBuying = true;
         } else if (val === "维修案例") {
           this.acquireSearchCaseList();
@@ -426,6 +426,47 @@
             }
           }
           this.searchList = res.data.data;
+        }).catch((err) => {
+          console.log(err);
+        })
+      },
+      //获取缓存诊断报告列表
+      acquireCacheReportList() {
+        this.searchType = "";
+        //加载蒙层
+        let loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+        axios({
+          method: "GET",
+          url:
+            `${baseURL}/v1/asset/diagnoseReport?page=${this.page}&limit=${this.limit}`,
+          headers: {
+            "Content-Type": "application/json",
+          }
+        }).then((res) => {
+          loading.close();//关闭蒙层
+          if (res.data.data === null) {
+            this.searchList = [];
+            this.total = res.data.count;
+            this.totalCount = res.data.total_count;
+            return;
+          } else {
+            this.total = res.data.count;
+            this.totalCount = res.data.total_count;
+            this.number = res.data.levels;
+            for (let v of res.data.data) {
+              v.generate_time = utils.formatDate(new Date(v.generate_time), "yyyy-MM-dd hh:mm:ss");
+              v.sell_at = utils.formatDate(new Date(v.sell_at), "yyyy-MM-dd hh:mm:ss");
+              v.assetname = utils.searchHighlight(v.assetname, this.input, "color", "#c6351e");
+            }
+            this.$set(this.dateInput, "0", res.data.default_search.start_time)
+            this.$set(this.dateInput, "1", res.data.default_search.end_time)
+            this.searchList = res.data.data;
+          }
         }).catch((err) => {
           console.log(err);
         })
@@ -530,8 +571,8 @@
       },
       //分页获取相对应的列表
       pagingSearch() {
-        if (this.searchType === "全部") {
-          this.acquireSearchAllList();
+        if (this.searchType === "") {
+          this.acquireCacheReportList();
         } else if (this.searchType === "诊断报告") {
           this.acquireSearchReportList();
         } else if (this.searchType === "维修案例") {
@@ -545,11 +586,24 @@
           this.apiKey = buyInfoObj.apikey;
           this.assetId = buyInfoObj.assetid;
           this.userId = JSON.parse(sessionStorage.getItem("loginInfo")).user_id;
-          let data = {};
-          data.nums = this.buyCount;
+          let data = {
+            nums:this.buyCount,
+            province:this.newTerritoryInput[0],
+            city:this.newTerritoryInput[1],
+            start_time:this.dateInput[0],
+            end_time:this.dateInput[1],
+            vin:this.vinInput,
+            brand:this.brand,
+            style:this.carType,
+            style_year:this.year,
+            terminal_id:this.idInput,
+            technician_id:this.technicianInput,
+            start_mileage:this.startMileage,
+            end_mileage:this.endMileage,
+          };
           axios({
             method: "POST",
-            url: `${baseURL}/v1/order/${this.userId}/${this.apiKey}/${this.assetId}?tag=1`,
+            url: `${baseURL}/v1/order/batch/${this.userId}/${this.apiKey}`,
             headers: {
               "Content-Type": "application/x-www-form-urlencoded",
               "X-Access-Token": this.token,

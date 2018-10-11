@@ -31,7 +31,6 @@
     },
     methods:{
       handleCurrentChange(val){
-        console.log(val)
         this.$emit("w",val)
       },
     }
