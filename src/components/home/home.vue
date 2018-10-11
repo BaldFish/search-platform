@@ -60,7 +60,8 @@
               </el-select>
             </template>-->
             <template>
-              <el-select v-model="brand" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="车系品牌">
+              <el-select v-model="brand" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="车系品牌"
+                         @change="acquireCarTypeList">
                 <el-option
                   v-for="(item,index) in brandList"
                   :key="index"
@@ -72,27 +73,27 @@
             <template>
               <el-select v-model="carType" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="车型">
                 <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
+                  v-for="(item,index) in carTypeList"
+                  :key="index"
+                  :label="index"
+                  :value="index">
                 </el-option>
               </el-select>
             </template>
             <template>
               <el-select v-model="year" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="车年款">
                 <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
+                  v-for="(item,index) in yearList"
+                  :key="index"
+                  :label="item"
+                  :value="item">
                 </el-option>
               </el-select>
             </template>
             <template>
               <el-select v-model="mileage" clearable size="small" style="margin-right: 25px;width: 120px" placeholder="里程">
                 <el-option
-                  v-for="item in options"
+                  v-for="item in mileageList"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value">
@@ -253,8 +254,8 @@
         totalCount: "",
         input: "",
         searchType: "全部",
-        bulkBuying:false,
-        newAsset:true,
+        bulkBuying: false,
+        newAsset: true,
         isReport: true,
         isCase: false,
         territoryInput: [],
@@ -270,41 +271,38 @@
         apiKey: "",
         assetId: "",
         id: "",
-        brandList:[],
-        carTypeList:{},
-        mileageList:["0-9999万公里","1-1万公里","0-1万公里",],
-        brand:"",
-        carType:"",
-        year:"",
-        mileage:"",
-        options: [{
-          value: '选项1',
-          label: '一汽大众'
+        brandList: [],
+        carTypeList: {},
+        yearList: [],
+        mileageList: [{
+          value: '0-10000',
+          label: '1万以下'
         }, {
-          value: '选项2',
-          label: '本田'
+          value: '10000-30000',
+          label: '1万-3万'
         }, {
-          value: '选项3',
-          label: '宝马'
+          value: '30000-50000',
+          label: '3万-5万'
         }, {
-          value: '选项4',
-          label: '广汽传祺'
+          value: '50000-100000',
+          label: '5万-10万'
         }, {
-          value: '选项5',
-          label: '雪佛莱'
-        }],
-        /*value1: '',
-        value2: '',
-        value3: '',
-        value4: '',
-        value5: '',*/
-        number: [/*{
-          value: '1001',
-          label: '全部'
+          value: '100000-200000',
+          label: '10万-20万'
         }, {
-          value: '1000',
-          label: '1000'
-        },*/],
+          value: '200000-500000',
+          label: '20万-50万'
+        }, {
+          value: '500000-99999999',
+          label: '50万以上'
+        },],
+        brand: "",
+        carType: "",
+        year: "",
+        mileage: "",
+        startMileage:"",
+        endMileage:"",
+        number: [],
         buyCount: '',
         animate: false,
         items: [
@@ -334,7 +332,15 @@
         }
       }
     },
-    watch: {},
+    watch: {
+      carType: function () {
+        this.yearList = this.carTypeList[this.carType]
+      },
+      mileage:function () {
+        this.startMileage=this.mileage.split("-")[0];
+        this.endMileage=this.mileage.split("-")[1];
+      }
+    },
     methods: {
       scroll() {
         this.animate = true;    // 因为在消息向上滚动的时候需要添加css3过渡动画，所以这里需要设置true
@@ -360,18 +366,18 @@
         //this.$set(this.$refs.radioTop, 'checked', true)
         //this.$refs.radioTop.checked=true
         this.page = 1;
-        this.number=[];
+        this.number = [];
         this.acquireSearchReportList();
-        this.bulkBuying=true;
-        this.newAsset=false;
+        this.bulkBuying = true;
+        this.newAsset = false;
       },
       //搜索维修案例
       caseSearch() {
         this.page = 1;
-        this.number=[];
+        this.number = [];
         this.acquireSearchCaseList();
-        this.bulkBuying=true;
-        this.newAsset=false;
+        this.bulkBuying = true;
+        this.newAsset = false;
       },
       //顶部搜索类型切换
       toggleSearch(val) {
@@ -386,16 +392,16 @@
       //最新上架资产按类型切换筛查
       toggleFiltrate(val) {
         this.page = 1;
-        this.number=[];
+        this.number = [];
         if (val === "全部") {
           this.acquireSearchAllList();
-          this.bulkBuying=false;
+          this.bulkBuying = false;
         } else if (val === "诊断报告") {
           this.acquireSearchReportList();
-          this.bulkBuying=true;
-        }else if (val === "维修案例") {
+          this.bulkBuying = true;
+        } else if (val === "维修案例") {
           this.acquireSearchCaseList();
-          this.bulkBuying=true;
+          this.bulkBuying = true;
         }
       },
       //获取搜索所有列表
@@ -429,7 +435,7 @@
         axios({
           method: "GET",
           url:
-            `${baseURL}/v1/asset/diagnoseReport/search?key=${this.input}&page=${this.page}&limit=${this.limit}&province=${this.newTerritoryInput[0]}&city=${this.newTerritoryInput[1]}&vin=${this.vinInput}&start_time=${this.dateInput[0]}&end_time=${this.dateInput[1]}`,
+            `${baseURL}/v1/asset/diagnoseReport/search?page=${this.page}&limit=${this.limit}&province=${this.newTerritoryInput[0]}&city=${this.newTerritoryInput[1]}&start_time=${this.dateInput[0]}&end_time=${this.dateInput[1]}&uuid=${this.idInput}&technician_id=${this.technicianInput}&vin=${this.vinInput}&terminal_id=${this.facilityInput}&brand=${this.brand}&style=${this.carType}&style_year=${this.year}&start_mileage=${this.startMileage}&end_mileage=${this.endMileage}`,
           headers: {
             "Content-Type": "application/json",
           }
@@ -442,7 +448,7 @@
           } else {
             this.total = res.data.count;
             this.totalCount = res.data.total_count;
-            this.number=res.data.levels;
+            this.number = res.data.levels;
             for (let v of res.data.data) {
               v.generate_time = utils.formatDate(new Date(v.generate_time), "yyyy-MM-dd hh:mm:ss");
               v.sell_at = utils.formatDate(new Date(v.sell_at), "yyyy-MM-dd hh:mm:ss");
@@ -466,7 +472,7 @@
         }).then((res) => {
           this.total = res.data.count;
           this.totalCount = res.data.total_count;
-          this.number=res.data.levels;
+          this.number = res.data.levels;
           for (let v of res.data.data) {
             v.sell_at = utils.formatDate(new Date(v.sell_at), "yyyy-MM-dd hh:mm:ss");
             v.assetname = utils.searchHighlight(v.assetname, this.input, "color", "#c6351e");
@@ -575,7 +581,7 @@
         this.$store.commit("changeBuy", val);
       },*/
       //获取车系品牌列表
-      acquireBrandList(){
+      acquireBrandList() {
         axios({
           method: "GET",
           url: `https://search-api-test.launchain.org/vehicle_brand/get_list`,
@@ -583,11 +589,26 @@
             "Content-Type": "application/json",
           }
         }).then((res) => {
-          this.brandList=res.data.brand_list
-          console.log(res);
+          this.brandList = res.data.brand_list
         }).catch((err) => {
           console.log(err);
         })
+      },
+      //根据品牌获取车型列表
+      acquireCarTypeList() {
+        this.carTypeList = {};
+        if (this.brand !== "") {
+          axios({
+            method: "POST",
+            url: `https://search-api-test.launchain.org/vehicle_type/get_list`,
+            //data: querystring.stringify({brand:`${this.brand}`}),
+            data: JSON.stringify({brand: `${this.brand}`})
+          }).then((res) => {
+            this.carTypeList = res.data;
+          }).catch((err) => {
+            console.log(err);
+          })
+        }
       },
     },
   }
@@ -607,8 +628,7 @@
           display inline-block
           height: 50px
           margin: 0 auto
-          margin-left 30px
-          /*.tab-tips {
+          margin-left 30px /*.tab-tips {
             font-size: 16px;
             color: #666666;
             display inline-block
