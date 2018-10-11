@@ -121,12 +121,12 @@
       <div class="tab-change">
         <span class="tab-tips" v-if="newAsset">最新上架资产：</span>
         <ul v-if="newAsset">
-          <li>
+          <!--<li>
             <input type="radio" name="radioFiltrate" @click="toggleFiltrate('全部')" checked>
             <div class="radio-box"><p>全部</p></div>
-          </li>
+          </li>-->
           <li>
-            <input type="radio" name="radioFiltrate" @click="toggleFiltrate('诊断报告')">
+            <input type="radio" name="radioFiltrate" @click="toggleFiltrate('诊断报告')" checked>
             <div class="radio-box"><p>诊断报告</p></div>
           </li>
           <li>
@@ -253,8 +253,8 @@
         total: 10,
         totalCount: "",
         input: "",
-        searchType: "全部",
-        bulkBuying: false,
+        searchType: "诊断报告",
+        bulkBuying: true,
         newAsset: true,
         isReport: true,
         isCase: false,
@@ -320,7 +320,8 @@
         this.userId = JSON.parse(sessionStorage.getItem("loginInfo")).user_id;
         this.token = JSON.parse(sessionStorage.getItem("loginInfo")).token;
       }
-      this.acquireSearchAllList();
+      this.acquireSearchReportList();
+      //this.acquireSearchAllList();
       this.acquireBrandList();
     },
     computed: {
