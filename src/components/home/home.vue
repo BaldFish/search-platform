@@ -142,7 +142,7 @@
       </div>
       <div class="fr buy-all" v-if="bulkBuying">
           <span class="buy-tips">
-            为您找到相关结果<span>{{totalCount}}</span>条，本次显示 <span>{{total}}</span>条
+            <!--为您找到相关结果<span>{{totalCount}}</span>条，-->本次显示 <span>{{total}}</span>条
           </span>
         <label>最新</label>
         <template>
