@@ -34,7 +34,7 @@
               <span class="type_span">时间：</span>
               <el-date-picker class="date_input" v-model="dateInput" type="daterange" range-separator="至" start-placeholder="开始日期"
                               end-placeholder="结束日期"
-                              format="yyyy-MM-dd" default-value="2018-01-01" size="small">
+                              value-format="yyyy-MM-dd" default-value="2018-01-01" size="small">
               </el-date-picker>
             </div>
             <div class="type_vin">
@@ -142,7 +142,7 @@
       </div>
       <div class="fr buy-all" v-if="bulkBuying">
           <span class="buy-tips">
-            为您找到相关结果<span>{{totalCount}}</span>条，本次显示 <span>{{total}}</span>条
+            <span v-if="search">为您找到相关结果<span class="mum">{{totalCount}}</span>条，</span>本次显示 <span class="mum">{{total}}</span>条
           </span>
         <label>最新</label>
         <template>
@@ -255,6 +255,7 @@
         input: "",
         searchType: "",
         bulkBuying: true,
+        search:false,
         newAsset: true,
         isReport: true,
         isCase: false,
@@ -370,6 +371,7 @@
         this.number = [];
         this.acquireSearchReportList();
         this.bulkBuying = true;
+        this.search=true;
         this.newAsset = false;
       },
       //搜索维修案例
@@ -378,6 +380,7 @@
         this.number = [];
         this.acquireSearchCaseList();
         this.bulkBuying = true;
+        this.search=true;
         this.newAsset = false;
       },
       //顶部搜索类型切换
@@ -882,7 +885,7 @@
           font-size: 13px;
           color: #666666;
           margin-right 80px
-          span {
+          .mum {
             color: #d91e01;
           }
         }
