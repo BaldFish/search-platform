@@ -18,7 +18,28 @@
           <div style="float: left">
             <div class="type_territory">
               <span class="type_span">省市：</span>
-              <area-select class="territory_input" v-model="territoryInput" :data="pca" type="text"></area-select>
+              <!--<area-select class="territory_input" v-model="territoryInput" :data="pca" type="text"></area-select>-->
+              <template>
+                <el-select v-model="province" clearable size="small" style="margin-right: 25px;width: 155px" placeholder="省份"
+                           @change="acquireCityList">
+                  <el-option
+                    v-for="(item,index) in provinceList"
+                    :key="index"
+                    :label="item"
+                    :value="item">
+                  </el-option>
+                </el-select>
+              </template>
+              <template>
+                <el-select v-model="city" clearable size="small" style="margin-right: 25px;width: 155px" placeholder="城市">
+                  <el-option
+                    v-for="(item,index) in cityList"
+                    :key="index"
+                    :label="item"
+                    :value="item">
+                  </el-option>
+                </el-select>
+              </template>
             </div>
             <div class="type_vin">
               <span class="type_span">数据上链ID：</span>
@@ -186,7 +207,7 @@
             </div>
             <!--<div :class="item.shopcart_id?'like':'dislike'" @click="toggleLike(item.id)">收藏</div>-->
             <div class="price_box">
-              <a href="javascript:void(0)"><p class="price">{{item.price}}</p></a>
+              <a href="javascript:void(0)"><p class="price">¥{{item.price}}</p></a>
               <a href="/caseSource" @click="getCaseSource(item.id)"><p class="tracing">可信溯源</p></a>
               <a href="javascript:void(0)" @click.stop="buy(item.id)"><p class="buy">一键购买</p></a>
             </div>
@@ -212,7 +233,7 @@
             </div>
             <!--<div :class="item.shopcart_id?'like':'dislike'" @click="toggleLike(item.id)">收藏</div>-->
             <div class="price_box">
-              <a href="javascript:void(0)"><p class="price">{{item.price}}</p></a>
+              <a href="javascript:void(0)"><p class="price">¥{{item.price}}</p></a>
               <a href="/caseSource" @click="getCaseSource(item.id)"><p class="tracing">可信溯源</p></a>
               <a href="javascript:void(0)" @click.stop="buy(item.id)"><p class="buy">一键购买</p></a>
             </div>
@@ -237,7 +258,7 @@
 <script>
   import axios from "axios";
   import _ from "lodash";
-  import {baseURL, cardURL} from '@/common/js/public.js';
+  import {baseURL, cardURL, bigDataURL} from '@/common/js/public.js';
   import utils from "@/common/js/utils.js";
   import {pca, pcaa} from 'area-data';
   
@@ -255,7 +276,7 @@
         input: "",
         searchType: "",
         bulkBuying: true,
-        search:false,
+        search: false,
         newAsset: true,
         isReport: true,
         isCase: false,
@@ -272,6 +293,8 @@
         apiKey: "",
         assetId: "",
         id: "",
+        provinceList: [],
+        cityList: [],
         brandList: [],
         carTypeList: {},
         yearList: [],
@@ -297,14 +320,32 @@
           value: '500000-99999999',
           label: '50万以上'
         },],
+        province: "",
+        city: "",
         brand: "",
         carType: "",
         year: "",
         mileage: "",
-        startMileage:"",
-        endMileage:"",
+        startMileage: "",
+        endMileage: "",
         number: [],
         buyCount: '',
+        bulkBuyData: {
+          //nums:"",
+          province: "",
+          city: "",
+          start_time: "",
+          end_time: "",
+          vin: "",
+          brand: "",
+          style: "",
+          style_year: "",
+          terminal_id: "",
+          technician_id: "",
+          start_mileage: "",
+          end_mileage: "",
+          uuid:"",
+        },
         animate: false,
         items: [
           {name: "百万积分大派送！"},
@@ -323,6 +364,7 @@
       }
       this.acquireCacheReportList();
       //this.acquireSearchAllList();
+      this.acquireProvinceList();
       this.acquireBrandList();
     },
     computed: {
@@ -338,9 +380,9 @@
       carType: function () {
         this.yearList = this.carTypeList[this.carType]
       },
-      mileage:function () {
-        this.startMileage=this.mileage.split("-")[0];
-        this.endMileage=this.mileage.split("-")[1];
+      mileage: function () {
+        this.startMileage = this.mileage.split("-")[0];
+        this.endMileage = this.mileage.split("-")[1];
       }
     },
     methods: {
@@ -363,6 +405,16 @@
         }).catch(() => {
         });
       },
+      openNumHint() {
+        this.$confirm('请选择购买数量', '提示', {
+          confirmButtonText: '是',
+          cancelButtonText: '否',
+          type: 'warning',
+          center: true
+        }).then(() => {
+        }).catch(() => {
+        });
+      },
       //搜索诊断报告
       reportSearch() {
         //this.$set(this.$refs.radioTop, 'checked', true)
@@ -371,7 +423,7 @@
         this.number = [];
         this.acquireSearchReportList();
         this.bulkBuying = true;
-        this.search=true;
+        this.search = true;
         this.newAsset = false;
       },
       //搜索维修案例
@@ -380,7 +432,7 @@
         this.number = [];
         this.acquireSearchCaseList();
         this.bulkBuying = true;
-        this.search=true;
+        this.search = true;
         this.newAsset = false;
       },
       //顶部搜索类型切换
@@ -439,7 +491,7 @@
         //加载蒙层
         let loading = this.$loading({
           lock: true,
-          text: 'Loading',
+          text: '数据源较大，请耐心等待......',
           spinner: 'el-icon-loading',
           background: 'rgba(0, 0, 0, 0.7)'
         });
@@ -466,28 +518,64 @@
               v.sell_at = utils.formatDate(new Date(v.sell_at), "yyyy-MM-dd hh:mm:ss");
               v.assetname = utils.searchHighlight(v.assetname, this.input, "color", "#c6351e");
             }
-            this.$set(this.dateInput, "0", res.data.default_search.start_time)
-            this.$set(this.dateInput, "1", res.data.default_search.end_time)
+            this.$set(this.dateInput, "0", res.data.default_search.start_time);
+            this.$set(this.dateInput, "1", res.data.default_search.end_time);
+            this.bulkBuyData.start_time = res.data.default_search.start_time;
+            this.bulkBuyData.end_time = res.data.default_search.end_time;
             this.searchList = res.data.data;
           }
         }).catch((err) => {
           console.log(err);
         })
       },
-      //获取搜索诊断报告列表
+      //获取搜索诊断报告列表(默认最多返回1000条数据，返回数量是搜索时间最近两天的数量)
       acquireSearchReportList() {
         this.searchType = "诊断报告";
         //加载蒙层
         let loading = this.$loading({
           lock: true,
-          text: 'Loading',
+          text: '数据源较大，请耐心等待......',
           spinner: 'el-icon-loading',
           background: 'rgba(0, 0, 0, 0.7)'
         });
+        this.buyCount = "";
+        if (this.dateInput === null) {
+          this.bulkBuyData = {
+            province: this.province,
+            city: this.city,
+            start_time: "",
+            end_time: "",
+            vin: this.vinInput,
+            brand: this.brand,
+            style: this.carType,
+            style_year: this.year,
+            terminal_id: this.facilityInput,
+            technician_id: this.technicianInput,
+            start_mileage: this.startMileage,
+            end_mileage: this.endMileage,
+            uuid:this.idInput
+          };
+        } else {
+          this.bulkBuyData = {
+            province: this.province,
+            city: this.city,
+            start_time: this.dateInput[0],
+            end_time: this.dateInput[1],
+            vin: this.vinInput,
+            brand: this.brand,
+            style: this.carType,
+            style_year: this.year,
+            terminal_id: this.facilityInput,
+            technician_id: this.technicianInput,
+            start_mileage: this.startMileage,
+            end_mileage: this.endMileage,
+            uuid:this.idInput
+          };
+        }
         axios({
           method: "GET",
           url:
-            `${baseURL}/v1/asset/diagnoseReport/search?page=${this.page}&limit=${this.limit}&province=${this.newTerritoryInput[0]}&city=${this.newTerritoryInput[1]}&start_time=${this.dateInput[0]}&end_time=${this.dateInput[1]}&uuid=${this.idInput}&technician_id=${this.technicianInput}&vin=${this.vinInput}&terminal_id=${this.facilityInput}&brand=${this.brand}&style=${this.carType}&style_year=${this.year}&start_mileage=${this.startMileage}&end_mileage=${this.endMileage}`,
+            `${baseURL}/v1/asset/diagnoseReport/search?page=${this.page}&limit=${this.limit}&province=${this.bulkBuyData.province}&city=${this.bulkBuyData.city}&start_time=${this.bulkBuyData.start_time}&end_time=${this.bulkBuyData.end_time}&uuid=${this.bulkBuyData.uuid}&technician_id=${this.bulkBuyData.technician_id}&vin=${this.bulkBuyData.vin}&terminal_id=${this.bulkBuyData.terminal_id}&brand=${this.bulkBuyData.brand}&style=${this.bulkBuyData.style}&style_year=${this.bulkBuyData.style_year}&start_mileage=${this.bulkBuyData.start_mileage}&end_mileage=${this.bulkBuyData.end_mileage}`,
           headers: {
             "Content-Type": "application/json",
           }
@@ -509,6 +597,82 @@
             }
             this.searchList = res.data.data;
           }
+          this.acquireRealReportCount();
+        }).catch((err) => {
+          console.log(err);
+        })
+      },
+      //获取搜索诊断报告真实数据量
+      acquireRealReportCount() {
+        this.searchType = "诊断报告";
+        //加载蒙层
+        /*let loading = this.$loading({
+          lock: true,
+          text: '数据源较大，请耐心等待......',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });*/
+        this.buyCount = "";
+        if (this.dateInput === null) {
+          this.bulkBuyData = {
+            province: this.province,
+            city: this.city,
+            start_time: "",
+            end_time: "",
+            vin: this.vinInput,
+            brand: this.brand,
+            style: this.carType,
+            style_year: this.year,
+            terminal_id: this.facilityInput,
+            technician_id: this.technicianInput,
+            start_mileage: this.startMileage,
+            end_mileage: this.endMileage,
+            uuid:this.idInput
+          };
+        } else {
+          this.bulkBuyData = {
+            province: this.province,
+            city: this.city,
+            start_time: this.dateInput[0],
+            end_time: this.dateInput[1],
+            vin: this.vinInput,
+            brand: this.brand,
+            style: this.carType,
+            style_year: this.year,
+            terminal_id: this.facilityInput,
+            technician_id: this.technicianInput,
+            start_mileage: this.startMileage,
+            end_mileage: this.endMileage,
+            uuid:this.idInput
+          };
+        }
+        axios({
+          method: "GET",
+          url:
+            `${baseURL}/v1/asset/diagnoseReport/count?province=${this.bulkBuyData.province}&city=${this.bulkBuyData.city}&start_time=${this.bulkBuyData.start_time}&end_time=${this.bulkBuyData.end_time}&uuid=${this.bulkBuyData.uuid}&technician_id=${this.bulkBuyData.technician_id}&vin=${this.bulkBuyData.vin}&terminal_id=${this.bulkBuyData.terminal_id}&brand=${this.bulkBuyData.brand}&style=${this.bulkBuyData.style}&style_year=${this.bulkBuyData.style_year}&start_mileage=${this.bulkBuyData.start_mileage}&end_mileage=${this.bulkBuyData.end_mileage}`,
+          headers: {
+            "Content-Type": "application/json",
+          }
+        }).then((res) => {
+          //loading.close();//关闭蒙层
+          /*if (res.data.data === null) {
+            this.searchList = [];
+            this.total = res.data.count;
+            this.totalCount = res.data.total_count;
+            return;
+          } else {
+            this.total = res.data.count;
+            this.totalCount = res.data.total_count;
+            this.number = res.data.levels;
+            for (let v of res.data.data) {
+              v.generate_time = utils.formatDate(new Date(v.generate_time), "yyyy-MM-dd hh:mm:ss");
+              v.sell_at = utils.formatDate(new Date(v.sell_at), "yyyy-MM-dd hh:mm:ss");
+              v.assetname = utils.searchHighlight(v.assetname, this.input, "color", "#c6351e");
+            }
+            this.searchList = res.data.data;
+          }*/
+          this.totalCount = res.data.total_count;
+          this.number = res.data.levels;
         }).catch((err) => {
           console.log(err);
         })
@@ -519,7 +683,7 @@
         //加载蒙层
         let loading = this.$loading({
           lock: true,
-          text: 'Loading',
+          text: '数据源较大，请耐心等待......',
           spinner: 'el-icon-loading',
           background: 'rgba(0, 0, 0, 0.7)'
         });
@@ -589,35 +753,25 @@
           this.apiKey = buyInfoObj.apikey;
           this.assetId = buyInfoObj.assetid;
           this.userId = JSON.parse(sessionStorage.getItem("loginInfo")).user_id;
-          let data = {
-            nums:this.buyCount,
-            province:this.newTerritoryInput[0],
-            city:this.newTerritoryInput[1],
-            start_time:this.dateInput[0],
-            end_time:this.dateInput[1],
-            vin:this.vinInput,
-            brand:this.brand,
-            style:this.carType,
-            style_year:this.year,
-            terminal_id:this.idInput,
-            technician_id:this.technicianInput,
-            start_mileage:this.startMileage,
-            end_mileage:this.endMileage,
-          };
-          axios({
-            method: "POST",
-            url: `${baseURL}/v1/order/batch/${this.userId}/${this.apiKey}`,
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-              "X-Access-Token": this.token,
-            },
-            data: querystring.stringify(data),
-          }).then((res) => {
-            window.open(res.data.judge_url)
-            //window.open(`http://localhost:5000/checkOrder?order_id=${res.data.orderNum}`)
-          }).catch((err) => {
-            console.log(err);
-          })
+          this.bulkBuyData.nums = this.buyCount;
+          if (this.bulkBuyData.nums === "") {
+            this.openNumHint()
+          } else {
+            axios({
+              method: "POST",
+              url: `${baseURL}/v1/order/batch/${this.userId}/${this.apiKey}`,
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-Access-Token": this.token,
+              },
+              data: querystring.stringify(this.bulkBuyData),
+            }).then((res) => {
+              window.open(res.data.judge_url)
+              //window.open(`http://localhost:5000/checkOrder?order_id=${res.data.orderNum}`)
+            }).catch((err) => {
+              console.log(err);
+            })
+          }
         } else {
           this.open()
         }
@@ -658,7 +812,7 @@
       acquireBrandList() {
         axios({
           method: "GET",
-          url: `https://search-api-test.launchain.org/vehicle_brand/get_list`,
+          url: `${bigDataURL}/vehicle_brand/get_list`,
           headers: {
             "Content-Type": "application/json",
           }
@@ -674,11 +828,41 @@
         if (this.brand !== "") {
           axios({
             method: "POST",
-            url: `https://search-api-test.launchain.org/vehicle_type/get_list`,
+            url: `${bigDataURL}/vehicle_type/get_list`,
             //data: querystring.stringify({brand:`${this.brand}`}),
             data: JSON.stringify({brand: `${this.brand}`})
           }).then((res) => {
             this.carTypeList = res.data;
+          }).catch((err) => {
+            console.log(err);
+          })
+        }
+      },
+      //获取省份列表
+      acquireProvinceList() {
+        axios({
+          method: "GET",
+          url: `${bigDataURL}/province/get_list`,
+          headers: {
+            "Content-Type": "application/json",
+          }
+        }).then((res) => {
+          this.provinceList = res.data.province_list;
+        }).catch((err) => {
+          console.log(err);
+        })
+      },
+      //根据省份获取城市列表
+      acquireCityList() {
+        this.cityList = [];
+        this.city = "";
+        if (this.province !== "") {
+          axios({
+            method: "POST",
+            url: `${bigDataURL}/city/get_list`,
+            data: JSON.stringify({province: `${this.province}`})
+          }).then((res) => {
+            this.cityList = res.data.city_list;
           }).catch((err) => {
             console.log(err);
           })
@@ -1067,10 +1251,10 @@
               height 24px
               font-size: 24px;
               color: #c6351e;
-              background-image: url('./images/currency.png');
-              background-repeat: no-repeat;
-              background-position: top left;
-              padding-left 26px
+              //background-image: url('./images/currency.png');
+              //background-repeat: no-repeat;
+              //background-position: top left;
+              //padding-left 26px
               margin-bottom 8px
             }
             .tracing {
