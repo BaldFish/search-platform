@@ -597,7 +597,9 @@
             }
             this.searchList = res.data.data;
           }
-          this.acquireRealReportCount();
+          if(this.bulkBuyData.uuid===""){
+            this.acquireRealReportCount();
+          }
         }).catch((err) => {
           console.log(err);
         })
@@ -756,6 +758,23 @@
           this.bulkBuyData.nums = this.buyCount;
           if (this.bulkBuyData.nums === "") {
             this.openNumHint()
+          } else if(this.bulkBuyData.nums ===1){
+            let data = {};
+            data.nums = 1;
+            axios({
+              method: "POST",
+              url: `${baseURL}/v1/order/${this.userId}/${this.apiKey}/${this.assetId}`,
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-Access-Token": this.token,
+              },
+              data: querystring.stringify(data),
+            }).then((res) => {
+              window.open(res.data.judge_url)
+              //window.open(`http://localhost:5000/checkOrder?order_id=${res.data.orderNum}`)
+            }).catch((err) => {
+              console.log(err);
+            })
           } else {
             axios({
               method: "POST",
