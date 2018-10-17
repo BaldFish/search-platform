@@ -258,7 +258,7 @@
 <script>
   import axios from "axios";
   import _ from "lodash";
-  import {baseURL, cardURL, bigDataURL} from '@/common/js/public.js';
+  import {baseURL, bigDataURL} from '@/common/js/public.js';
   import utils from "@/common/js/utils.js";
   import {pca, pcaa} from 'area-data';
   
@@ -758,7 +758,7 @@
           this.bulkBuyData.nums = this.buyCount;
           if (this.bulkBuyData.nums === "") {
             this.openNumHint()
-          } else if(this.bulkBuyData.nums ===1){
+          } else if(this.bulkBuyData.nums ==="1"){
             let data = {};
             data.nums = 1;
             axios({

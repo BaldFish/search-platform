@@ -44,7 +44,7 @@
               </li>
             </ul>
           </div>
-          <div class="next_btn" @click="nextStep(2)"><span>下一步</span></div>
+          <div class="next_btn" @click="nextStep(1)"><span>下一步</span></div>
         </section>
 
         <section class="forget_psw_sec" v-show="stepTwo">
@@ -68,7 +68,7 @@
               </li>
             </ul>
           </div>
-          <div class="next_btn step_two_btn" @click="nextStep()"><span>下一步</span></div>
+          <div class="next_btn step_two_btn" @click="nextStep(2)"><span>下一步</span></div>
         </section>
 
         <section class="forget_psw_sec" v-if="stepThree">
@@ -201,7 +201,7 @@
             this.captchaNotice = true
           });
         }else{
-          this.captchaNotice = false
+          this.captchaNotice = true
         }
       },
       //校验短信验证码
@@ -217,25 +217,32 @@
             this.codeNotice = true
           });
         }else{
-          this.codeNotice = false
+          this.codeNotice = true
         }
       },
       nextStep(id){
-        if (id){
+        console.log(id)
+        if (id===1){
           this.$validator.validateAll().then((result)=>{
             //校验是否正确：图形验证码、短信验证码
+            console.log(result)
+            console.log(this.captchaNotice)
+            console.log(this.codeNotice)
             if (this.captchaNotice || this.codeNotice){
+              console.log(0)
               return false
             }else{
               //校验input输入值
+              console.log(1)
               if(result){
                 //进入下一步
+                console.log(2)
                 this.stepTwo = true;
                 this.stepOne = false;
               }
             }
           })
-        } else{
+        } else if(id===2){
           let loginFormData = {
             phone:"+86"+this.phone, //手机号
             captcha_number: this.captcha_number, //图形验证码
