@@ -134,7 +134,7 @@
           method: "GET",
           url: `${baseURL}/v1/sessions/check`,
           headers: {
-            "X-Access-Token": `${token}`,
+            "Access-Token": `${token}`,
           }
         }).then((res) => {
           if (res.data.user_id) {
@@ -175,7 +175,7 @@
           method: "GET",
           url: `${baseURL}/v1/sessions/check`,
           headers: {
-            "X-Access-Token": `${token}`,
+            "Access-Token": `${token}`,
           }
         }).then((res) => {
           if (res.data.user_id) {
@@ -209,7 +209,7 @@
           method: "GET",
           url: `${baseURL}/v1/sessions/check`,
           headers: {
-            "X-Access-Token": `${token}`,
+            "Access-Token": `${token}`,
           }
         }).then((res) => {
           if (res.data.user_id) {
