@@ -82,9 +82,9 @@
 <script>
   import axios from "axios";
   import {baseURL} from '@/common/js/public.js';
-
+  
   const querystring = require('querystring');
-
+  
   export default {
     name: "login",
     components: {},
@@ -107,7 +107,7 @@
         code: "", //短信验证码
         password: "", //密码
         userId: "",
-        codeErrors:""
+        codeErrors: ""
       };
     },
     watch: {},
@@ -125,7 +125,7 @@
         return uuid;
       }
     },
-    mounted () {
+    mounted() {
       //这个是钩子函数
       //如果getCaptcha函数要执行，必须先执行钩子函数
       //这个钩子函数完成了对getCaptcha函数的调用
@@ -177,7 +177,6 @@
             //校验input输入值
             if (result) {
               this.isDisabled = false;
-
               //倒计时
               let me = this;
               me.codeValue = false;
@@ -205,7 +204,6 @@
             }
           }
         })
-
       },
       //校验图形验证码
       captchaError() {
@@ -287,12 +285,13 @@
                   document.cookie=`user_id=${res.data.user_id};domain=.launchain.cn`;
                   window.sessionStorage.setItem("loginInfo", JSON.stringify(res.data));
                   this.userId = res.data.user_id;
-                  this.acquireUserInfo();
+                  this.$router.back(-1)
+                  //this.acquireUserInfo();
                 }).catch(error => {
                   console.log(error);
                   //错误提示
-                  this.codeErrors.forEach((data)=>{
-                    if(error.response.data.code == data.code){
+                  this.codeErrors.forEach((data) => {
+                    if (error.response.data.code == data.code) {
                       this.$confirm(data.cn, '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
@@ -300,7 +299,7 @@
                       })
                     }
                   })
-
+                  
                 })
               }
             }
@@ -315,7 +314,7 @@
             captcha_id: this.captcha_id, //图片验证码ID
             captcha_number: this.captcha_number_right //图片验证码--图片
           };
-
+          
           this.$validator.validateAll({
             mobileRight: this.phoneRight,
             captcha_number_right: this.captcha_number_right,
@@ -334,21 +333,17 @@
                 }).then(res => {
                   /*document.cookie=`token=${res.data.token}`;
                   document.cookie=`user_id=${res.data.user_id}`;*/
-<<<<<<< HEAD
                   document.cookie=`token=${res.data.token};domain=.launchain.cn`;
                   document.cookie=`user_id=${res.data.user_id};domain=.launchain.cn`;
-=======
-                  document.cookie=`token=${res.data.token};domain=.launchain.org`;
-                  document.cookie=`user_id=${res.data.user_id};domain=.launchain.org`;
->>>>>>> develop
                   window.sessionStorage.setItem("loginInfo", JSON.stringify(res.data));
                   this.userId = res.data.user_id;
-                  this.acquireUserInfo();
+                  this.$router.back(-1)
+                  //this.acquireUserInfo();
                 }).catch(error => {
                   console.log(error);
                   //错误提示
-                  this.codeErrors.forEach((data)=>{
-                    if(error.response.data.code == data.code){
+                  this.codeErrors.forEach((data) => {
+                    if (error.response.data.code == data.code) {
                       this.$confirm(data.cn, '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
@@ -362,7 +357,7 @@
           })
         }
       },
-      acquireUserInfo() {
+      /*acquireUserInfo() {
         axios({
           method: "GET",
           url: `${baseURL}/v1/users/${this.userId}`,
@@ -376,7 +371,7 @@
         }).catch((err) => {
           console.log(err);
         });
-      },
+      },*/
     }
   }
 </script>
@@ -386,20 +381,20 @@
     background-size: 100% 100%;
     height: 765px;
   }
-
+  
   .content-box {
     width: 1200px;
     height: 100%;
     margin: 0 auto;
   }
-
+  
   .content-mid {
     width: 876px;
     height: 480px;
     margin: 0 auto;
     padding-top: 120px;
   }
-
+  
   .content-mid img {
     width: 370px;
     height: 480px;
@@ -407,7 +402,7 @@
     z-index: 10;
     position: relative;
   }
-
+  
   .content-right {
     width: 506px;
     height: 414px;
@@ -417,17 +412,17 @@
     margin-left: -28px;
     z-index: 5;
   }
-
+  
   .right-details {
     margin-top: 26px;
     margin-left: 62px;
   }
-
+  
   .content-nav {
     height: 48px;
     margin-bottom: 20px;
   }
-
+  
   .content-nav li {
     font-size: 20px;
     color: #222222;
@@ -438,17 +433,17 @@
     border-bottom: 4px solid #313131;
     cursor: pointer;
   }
-
+  
   .nav-avtive {
     color: #c7361e !important;
     border-bottom: 4px solid #c7361e !important;
   }
-
+  
   .nav-unavtive {
     color: #222222;
     border-bottom: 4px solid #313131;
   }
-
+  
   .account-login li {
     width: 380px;
     height: 40px;
@@ -456,7 +451,7 @@
     /*margin-bottom: 16px;*/
     margin-bottom: 24px
   }
-
+  
   .account-login li input {
     background-color: #f3f3f3;
     height: 24px;
@@ -466,19 +461,19 @@
     bottom: 17px;
     -webkit-box-shadow: 0 0 0px 1000px #f3f3f3 inset !important;
   }
-
+  
   .account-login li:nth-child(3) input {
     width: 210px;
   }
-
+  
   .account-login li:nth-child(2) input {
     bottom: 15px;
   }
-
+  
   .account-login li:nth-child(1) input {
     bottom: 14px;
   }
-
+  
   .account-login li:nth-child(1) i {
     width: 20px;
     height: 24px;
@@ -488,7 +483,7 @@
     position: relative;
     margin: 7px 10px;
   }
-
+  
   .account-login li:nth-child(2) i {
     width: 20px;
     height: 25px;
@@ -498,7 +493,7 @@
     position: relative;
     margin: 7px 10px;
   }
-
+  
   .account-login li:nth-child(3) i {
     width: 20px;
     height: 21px;
@@ -508,7 +503,7 @@
     position: relative;
     margin: 10px 10px;
   }
-
+  
   .img_change_img {
     width: 100px !important;
     height: 33px !important;
@@ -516,7 +511,7 @@
     margin: 3px 10px;
     cursor: pointer;
   }
-
+  
   .to_forget p {
     width: 388px;
     text-align: right;
@@ -525,7 +520,7 @@
     color: #666;
     margin-bottom: 20px;
   }
-
+  
   .to_login span {
     font-size: 18px;
     color: #ffffff;
@@ -537,14 +532,14 @@
     display: inline-block;
     margin-bottom: 12px;
   }
-
+  
   .to_register p {
     width: 380px;
     text-align: center;
     font-size: 16px;
     color: #666666;
   }
-
+  
   .phone-login li:nth-child(1) i {
     width: 19px;
     height: 28px;
@@ -552,7 +547,7 @@
     background-size: 100% 100%;
     bottom: 1px;
   }
-
+  
   .phone-login li:nth-child(2) i {
     width: 20px;
     height: 21px;
@@ -560,16 +555,16 @@
     background-size: 100% 100%;
     top: 3px;
   }
-
+  
   .phone-login li:nth-child(1) input {
     bottom: 17px;
   }
-
+  
   .phone-login li:nth-child(2) input {
     width: 210px;
     bottom: 10px;
   }
-
+  
   .get_code {
     border: solid 1px #c7361e;
     font-size: 14px;
@@ -577,7 +572,7 @@
     text-align: center;
     line-height: 35px;
   }
-
+  
   .count_down {
     background-color: #7d7d7d;
     font-size: 14px;
@@ -585,18 +580,18 @@
     text-align: center;
     line-height: 33px;
   }
-
+  
   .error {
     position: relative;
     color: #c6351e;
     display: inline-block;
     width: 200px;
   }
-
+  
   .error_bot {
     bottom: 3px;
   }
-
+  
   .error_top {
     top: 3px;
   }
@@ -618,7 +613,7 @@
           vertical-align top
           display inline-block
           font-size 14px
-          a{
+          a {
             color: #666666;
           }
         }
