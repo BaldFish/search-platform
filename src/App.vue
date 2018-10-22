@@ -122,7 +122,7 @@
         isShowRegister: false,
         isShowForgetPassword: false,
         toggleIndex: 0,
-        toggleParam: ["搜索", "交易平台", "转让平台"],
+        toggleParam: ["搜索", "交易平台"/*, "转让平台"*/],
         userId: '',
         token: "",
       }
@@ -150,7 +150,9 @@
             //this.acquireFavoriteCount();
           } else {
             this.isLogin = false;
-            this.dropOut()
+            sessionStorage.removeItem('loginInfo');
+            sessionStorage.removeItem('userInfo');
+            //this.dropOut()
           }
         }).catch((err) => {
           console.log(err);
@@ -225,7 +227,9 @@
             //this.acquireFavoriteCount();
           } else {
             this.isLogin = false;
-            this.dropOut()
+            sessionStorage.removeItem('loginInfo');
+            sessionStorage.removeItem('userInfo');
+            //this.dropOut()
           }
         }).catch((err) => {
           console.log(err);
@@ -292,8 +296,8 @@
         }).then(res => {
           sessionStorage.removeItem('loginInfo');
           sessionStorage.removeItem('userInfo');
-          /*document.cookie = `token=;expires=${new Date(0)}`;
-          document.cookie = `user_id=;expires=${new Date(0)}`;*/
+          //document.cookie = `token=;expires=${new Date(0)}`;
+          //document.cookie = `user_id=;expires=${new Date(0)}`;
           document.cookie = `token=;expires=${new Date(0)};domain=.launchain.org`;
           document.cookie = `user_id=;expires=${new Date(0)};domain=.launchain.org`;
           this.switchover = false;
