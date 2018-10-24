@@ -387,10 +387,10 @@
         background-image: url('./common/images/logo.png');
         background-position: top center;
         background-repeat: no-repeat;
-        width 100px
-        height 44px
+        width 150px
+        height 46px
         float left
-        margin-top 3px
+        margin-top 2px
         margin-left 6px
         position relative
         vertical-align top
@@ -407,7 +407,7 @@
         box-sizing border-box
         display inline-block
         text-align left
-        width 820px
+        width 770px
         height 50px
         font-size 0
         //padding-left 100px
