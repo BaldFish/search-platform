@@ -935,7 +935,7 @@
               }
               .radio-box {
                 position: relative;
-                bottom: 70px;
+                bottom: 69px;
                 text-align: center;
                 height: 50px;
               }
@@ -1060,7 +1060,7 @@
             }
             .radio-box {
               position: relative;
-              bottom: 70px;
+              bottom: 69px;
               text-align: center;
               height: 50px;
             }
