@@ -1,7 +1,7 @@
 {
-  "name": "exchange",
+  "name": "search-platform",
   "version": "1.0.0",
-  "description": "exchange",
+  "description": "search-platform",
   "author": "lwc <wence.lv@cnlaunch.com>",
   "private": true,
   "scripts": {
