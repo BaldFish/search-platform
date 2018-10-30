@@ -806,6 +806,7 @@
           this.userId = JSON.parse(sessionStorage.getItem("loginInfo")).user_id;
           let data = {};
           data.nums = 1;
+          var tempWindow=window.open('_blank');
           axios({
             method: "POST",
             url: `${baseURL}/v1/order/${this.userId}/${this.apiKey}/${this.assetId}`,
@@ -815,7 +816,8 @@
             },
             data: querystring.stringify(data),
           }).then((res) => {
-            window.open(res.data.judge_url)
+            tempWindow.location=res.data.judge_url;
+            //window.open(res.data.judge_url)
             //window.open(`http://localhost:5000/checkOrder?order_id=${res.data.orderNum}`)
           }).catch((err) => {
             console.log(err);
