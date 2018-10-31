@@ -14,8 +14,8 @@
           <span class="s_num">{{favoriteCount}}</span>
         </div>-->
         <div class="no_login" v-if="!isLogin">
-          <a href="/login">请登录</a>
-          <a href="/register">免费注册</a>
+          <a href="javascript:void(0)" @click="login">请登录</a>
+          <a href="javascript:void(0)" @click="register">免费注册</a>
         </div>
         <div class="login" v-if="isLogin" @mouseleave.stop="leaveUl">
           <div @click.stop="toggle">{{userName}} <img src="./common/images/down.png" alt=""></div>
@@ -95,7 +95,7 @@
 
 <script>
   import "@/common/stylus/index.styl";
-  import {baseURL,loginPlatform, exchangePlatform, transferPlatform, searchPlatform} from '@/common/js/public.js';
+  import {baseURL, loginPlatform, exchangePlatform, transferPlatform, searchPlatform} from '@/common/js/public.js';
   import axios from "axios";
   import utils from "@/common/js/utils.js";
   
@@ -201,7 +201,7 @@
         sessionStorage.removeItem('userInfo');
       }
     },*/
-    beforeUpdate(){
+    beforeUpdate() {
       let token = utils.getCookie("token");
       if (token) {
         axios({
@@ -238,16 +238,26 @@
       this.changTop()
     },
     computed: {
-      favoriteCount: function () {
+      /*favoriteCount: function () {
         return this.$store.state.favoriteCount
-      }
+      }*/
     },
     watch: {
-      favoriteCount: function () {
+      /*favoriteCount: function () {
         this.acquireFavoriteCount();
-      }
+      }*/
     },
     methods: {
+      login() {
+        let redirectURL = window.location.href;
+        let url=`?redirectURL=${redirectURL}`;
+        window.location.href=`${loginPlatform}${url}`;
+      },
+      register() {
+        let redirectURL = window.location.href;
+        let url=`?redirectURL=${redirectURL}`;
+        window.location.href=`${loginPlatform}${url}`;
+      },
       changTop() {
         if (this.$route.path == "/login") {
           this.isShowTopSearch = false;
@@ -269,7 +279,7 @@
           this.isShowLogin = false;
           this.isShowRegister = false;
           this.isShowForgetPassword = false;
-        }else {
+        } else {
           this.isShowTopSearch = true;
           this.isShowLogin = false;
           this.isShowRegister = false;
@@ -318,7 +328,7 @@
           window.location.href = transferPlatform
         }
       },
-      open() {
+      /*open() {
         this.$confirm('此操作需要先登录, 是否登录?', '提示', {
           confirmButtonText: '是',
           cancelButtonText: '否',
@@ -328,8 +338,8 @@
           this.$router.push("/login")
         }).catch(() => {
         });
-      },
-      acquireFavoriteCount() {
+      },*/
+      /*acquireFavoriteCount() {
         axios({
           method: "GET",
           url: `${baseURL}/v1/shopcart/count/${this.userId}`,
@@ -341,14 +351,14 @@
         }).catch((err) => {
           console.log(err);
         })
-      },
-      turnFavorite() {
+      },*/
+      /*turnFavorite() {
         if (JSON.parse(sessionStorage.getItem("loginInfo"))) {
           this.$router.push("/favorite")
         } else {
           this.open()
         }
-      },
+      },*/
     }
   }
 </script>
@@ -606,7 +616,7 @@
               }
             }
           }
-          li:first-child{
+          li:first-child {
             margin-right 36px
           }
         }
