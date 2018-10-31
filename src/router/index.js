@@ -1,10 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import myHome from '@/components/home/home'
-import myLogin from '@/components/login/login'
+/*import myLogin from '@/components/login/login'
 import myForgetPassword from '@/components/forgetPassword/forgetPassword'
 import myRegister from '@/components/register/register'
-import myContract from '@/components/register/contract'
+import myContract from '@/components/register/contract'*/
 Vue.use(Router);
 
 export default new Router({
@@ -19,7 +19,7 @@ export default new Router({
       name: 'home',
       component: myHome
     },
-    {
+    /*{
       path: '/login',
       name: 'login',
       component: myLogin
@@ -38,6 +38,6 @@ export default new Router({
       path: '/contract',
       name: 'contract',
       component: myContract
-    },
+    },*/
   ]
 })
