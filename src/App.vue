@@ -27,7 +27,7 @@
         </div>
       </div>
     </div>
-    <div class="login-header" v-if="isShowLogin">
+    <!--<div class="login-header" v-if="isShowLogin">
       <div class="login-header-cont">
         <router-link to="/home">
           <img src="./common/images/login_header.png" alt="">
@@ -53,7 +53,7 @@
           <router-link to="/login" class="to_login">登录</router-link>
         </p>
       </section>
-    </div>
+    </div>-->
     <!--<my-topSearch v-if="isShowTopSearch"></my-topSearch>
     <my-toggle :toggleIndex="toggleIndex"></my-toggle>-->
     <div class="main_wrap">
@@ -114,12 +114,12 @@
         switchover: false,
         isLogin: false,
         userName: "",
-        isShowTopSearch: false,
+        isShowTopSearch: true,
         isShowLogin: false,
         isShowRegister: false,
         isShowForgetPassword: false,
         toggleIndex: 0,
-        toggleParam: ["搜索", "交易平台"/*, "转让平台"*/],
+        toggleParam: ["搜索", "交易平台", "开发者计划"],
         userId: '',
         token: "",
       }
@@ -158,7 +158,7 @@
         sessionStorage.removeItem('loginInfo');
         sessionStorage.removeItem('userInfo');
       }
-      this.changTop()
+      //this.changTop()
     },
     /*mounted() {
       if (sessionStorage.getItem("loginInfo")) {
@@ -235,7 +235,7 @@
         sessionStorage.removeItem('loginInfo');
         sessionStorage.removeItem('userInfo');
       }
-      this.changTop()
+      //this.changTop()
     },
     computed: {
       /*favoriteCount: function () {
@@ -258,7 +258,7 @@
         let url=`?redirectURL=${redirectURL}`;
         window.location.href=`${loginPlatform}${url}`;
       },
-      changTop() {
+      /*changTop() {
         if (this.$route.path == "/login") {
           this.isShowTopSearch = false;
           this.isShowLogin = true;
@@ -285,7 +285,7 @@
           this.isShowRegister = false;
           this.isShowForgetPassword = false;
         }
-      },
+      },*/
       reload() {
         this.isRouterAlive = false;
         this.$nextTick(() => {
@@ -321,24 +321,25 @@
       },
       platform(index) {
         if (index === 0) {
-          window.location.href = searchPlatform
+          window.location.href = searchPlatform;
         } else if (index === 1) {
-          window.location.href = exchangePlatform
+          window.location.href = exchangePlatform;
         } else if (index === 2) {
-          window.location.href = transferPlatform
+          this.$router.push("/developer");
+          this.toggleIndex=2;
         }
       },
-      /*open() {
+      open() {
         this.$confirm('此操作需要先登录, 是否登录?', '提示', {
           confirmButtonText: '是',
           cancelButtonText: '否',
           type: 'warning',
           center: true
         }).then(() => {
-          this.$router.push("/login")
+          this.login()
         }).catch(() => {
         });
-      },*/
+      },
       /*acquireFavoriteCount() {
         axios({
           method: "GET",
@@ -528,7 +529,7 @@
     }
   }
   
-  .login-header {
+  /*.login-header {
     width: 100%;
     height: 130px;
     background-color: #f3f3f3;
@@ -564,7 +565,7 @@
       }
     }
   }
-  
+  */
   .main_wrap {
     flex: 1;
     box-sizing: border-box;
