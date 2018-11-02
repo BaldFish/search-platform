@@ -299,6 +299,7 @@
         this.switchover = false
       },
       platform(index) {
+        console.log(index)
         if (index === 0) {
           window.location.href = searchPlatform;
         } else if (index === 1) {
