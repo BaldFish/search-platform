@@ -119,7 +119,7 @@
         isShowRegister: false,
         isShowForgetPassword: false,
         toggleIndex: 0,
-        toggleParam: ["搜索", "交易平台", "开发者计划"],
+        toggleParam: ["搜索", "交易", "开发者计划"],
         userId: '',
         token: "",
       }
