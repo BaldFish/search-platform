@@ -258,7 +258,7 @@
 <script>
   import axios from "axios";
   import _ from "lodash";
-  import {baseURL, bigDataURL} from '@/common/js/public.js';
+  import {baseURL, bigDataURL,loginPlatform} from '@/common/js/public.js';
   import utils from "@/common/js/utils.js";
   import {pca, pcaa} from 'area-data';
   
@@ -386,6 +386,11 @@
       }
     },
     methods: {
+      login() {
+        let redirectURL = window.location.href;
+        let url=`?redirectURL=${redirectURL}`;
+        window.location.href=`${loginPlatform}${url}`;
+      },
       scroll() {
         this.animate = true;    // 因为在消息向上滚动的时候需要添加css3过渡动画，所以这里需要设置true
         setTimeout(() => {      //  这里直接使用了es6的箭头函数，省去了处理this指向偏移问题，代码也比之前简化了很多
@@ -401,7 +406,7 @@
           type: 'warning',
           center: true
         }).then(() => {
-          this.$router.push("/login")
+          this.login();
         }).catch(() => {
         });
       },
