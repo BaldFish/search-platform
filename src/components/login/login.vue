@@ -279,10 +279,17 @@
                   url: `${baseURL}/v1/sessions`,
                   data: querystring.stringify(loginFormData)
                 }).then(res => {
+<<<<<<< HEAD
                   /*document.cookie=`token=${res.data.token}`;
                   document.cookie=`user_id=${res.data.user_id}`;*/
                   document.cookie=`token=${res.data.token};domain=.launchain.cn`;
                   document.cookie=`user_id=${res.data.user_id};domain=.launchain.cn`;
+=======
+                  /*document.cookie = `token=${res.data.token}`;
+                  document.cookie = `user_id=${res.data.user_id}`;*/
+                  document.cookie = `token=${res.data.token};domain=.dadajs.com.cn`;
+                  document.cookie = `user_id=${res.data.user_id};domain=.dadajs.com.cn`;
+>>>>>>> develop
                   window.sessionStorage.setItem("loginInfo", JSON.stringify(res.data));
                   this.userId = res.data.user_id;
                   this.$router.back(-1)
@@ -331,10 +338,17 @@
                   url: `${baseURL}/v1/sessions/phone`,
                   data: querystring.stringify(loginFormData)
                 }).then(res => {
+<<<<<<< HEAD
                   /*document.cookie=`token=${res.data.token}`;
                   document.cookie=`user_id=${res.data.user_id}`;*/
                   document.cookie=`token=${res.data.token};domain=.launchain.cn`;
                   document.cookie=`user_id=${res.data.user_id};domain=.launchain.cn`;
+=======
+                  /*document.cookie = `token=${res.data.token}`;
+                  document.cookie = `user_id=${res.data.user_id}`;*/
+                  document.cookie = `token=${res.data.token};domain=.dadajs.com.cn`;
+                  document.cookie = `user_id=${res.data.user_id};domain=.dadajs.com.cn`;
+>>>>>>> develop
                   window.sessionStorage.setItem("loginInfo", JSON.stringify(res.data));
                   this.userId = res.data.user_id;
                   this.$router.back(-1)
