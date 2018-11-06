@@ -16,7 +16,7 @@
         </div>-->
         <div class="no_login" v-if="!isLogin">
           <a href="javascript:void(0)" @click="login">请登录</a>
-          <a href="javascript:void(0)" @click="register">免费注册</a>
+          <!--<a href="javascript:void(0)" @click="register">免费注册</a>-->
         </div>
         <div class="login" v-if="isLogin" @mouseleave.stop="leaveUl">
           <div @click.stop="toggle">{{userName}} <img src="./common/images/down.png" alt=""></div>
@@ -383,41 +383,19 @@
         color: #ffffff;
         font-size 12px
       }
-      /*.logo {
-        display inline-block
-        color #ffffff
-        background-image: url('./common/images/logo.png');
-        background-position: top center;
-        background-repeat: no-repeat;
-        width 150px
-        height 46px
-        float left
-        margin-top 2px
-        margin-left 6px
-        position relative
-        vertical-align top
-        p {
-          line-height 20px
-          font-size 12px
-          position absolute
-          left 50px
-          bottom 0
-        }
-        
-      }*/
       .logo {
         float left
         box-sizing border-box
         font-size: 0px;
         display: table-cell;
-        width: 150px;
+        width: 160px;
         height: 50px;
         vertical-align: top;
         text-align: center;
         img {
           vertical-align: top;
-          max-width 150px
-          max-height 46px
+          max-width 160px
+          max-height 48px
           position: relative;
           top: 50%;
           transform: translateY(-50%);
@@ -427,7 +405,7 @@
         box-sizing border-box
         display inline-block
         text-align left
-        width 770px
+        width 760px
         height 50px
         font-size 0
         //padding-left 100px
@@ -495,8 +473,9 @@
       .no_login {
         vertical-align top
         display inline-block
-        width 160px
+        width 140px
         height 50px
+        margin-right 20px
         a {
           font-size 12px
           margin-left 28px
@@ -505,8 +484,9 @@
       }
       .login {
         display inline-block
+        margin-right 20px
         cursor pointer
-        width 160px
+        width 140px
         height 50px
         position relative
         color #ffffff
@@ -643,13 +623,13 @@
           font-size: 0px;
           color: #c6351e;
           display: table-cell;
-          width: 150px;
+          width: 200px;
           height: 150px;
           vertical-align: top;
           text-align: center;
           img {
             vertical-align: top;
-            max-width 150px
+            max-width 200px
             max-height 150px
             position: relative;
             top: 50%;
@@ -661,6 +641,8 @@
         margin-left 130px
         li{
           cursor pointer
+          border 1px solid #ffffff
+          padding 4px
         }
       }
       .ft-box:last-child {
