@@ -4,7 +4,6 @@
       <div class="head">
         <a class="logo" href="/">
           <img src="./common/images/logo.png" alt="">
-          <!--<p>Trusted Assets Blockchain</p>-->
         </a>
         <ul class="platform">
           <li v-for="(item,index) of toggleParam" @click="platform(index)" :class="{active:index===toggleIndex}">{{item}}</li>
@@ -62,6 +61,36 @@
     <div class="main_wrap">
       <router-view class="main" v-if="isRouterAlive"></router-view>
     </div>
+    <el-dialog
+      title="提示"
+      :visible.sync="centerDialogVisible"
+      width="380px" top="20vh"
+      center class="dialog">
+      <div class="content">
+        <div class="header">
+          <a class="close" href="javascript:void(0)"></a>
+          <p class="phone">咨询热线：010-58205388</p>
+          <p class="tip">请填写一下信息，我们会尽快和您联系</p>
+        </div>
+        <div class="mainer">
+          <div class="name">
+            <label for="name">您的姓名：</label>
+            <input type="text" id="name">
+          </div>
+          <div class="phone">
+            <label for="phone">手机号码：</label>
+            <input type="text" id="phone">
+          </div>
+          <div class="content">
+            <label for="content">留言内容：</label>
+            <textarea id="content"></textarea>
+          </div>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="centerDialogVisible = false">提交留言</el-button>
+  </span>
+    </el-dialog>
     <div class="footer-wrap">
       <div class="footer">
         <div class="ft-box">
@@ -118,7 +147,7 @@
     },
     data() {
       return {
-        centerDialogVisible: false,
+        centerDialogVisible: true,
         isRouterAlive: true,
         switchover: false,
         isLogin: false,
@@ -169,11 +198,11 @@
       }
       //this.changTop()
     },
-    mounted(){
-      if(this.pathname==="/developer"){
-        this.toggleIndex=2
-      }else{
-        this.toggleIndex=0
+    mounted() {
+      if (this.pathname === "/developer") {
+        this.toggleIndex = 2
+      } else {
+        this.toggleIndex = 0
       }
     },
     beforeUpdate() {
@@ -213,22 +242,23 @@
       //this.changTop()
     },
     computed: {
-      pathname:{
-        get:function () {
+      pathname: {
+        get: function () {
           return document.location.pathname
         },
-        set:function () {}
+        set: function () {
+        }
       },
       /*favoriteCount: function () {
         return this.$store.state.favoriteCount
       }*/
     },
     watch: {
-      $route(to,from){
-        if(to.path==="/developer"){
-          this.toggleIndex=2
-        }else{
-          this.toggleIndex=0
+      $route(to, from) {
+        if (to.path === "/developer") {
+          this.toggleIndex = 2
+        } else {
+          this.toggleIndex = 0
         }
       },
       /*favoriteCount: function () {
@@ -241,8 +271,8 @@
         let url=`?redirectURL=${redirectURL}`;
         window.location.href=`http://localhost:5003/login${url}`;*/
         let redirectURL = window.location.href;
-        let url=`?redirectURL=${redirectURL}`;
-        window.location.href=`${loginPlatform}/login${url}`;
+        let url = `?redirectURL=${redirectURL}`;
+        window.location.href = `${loginPlatform}/login${url}`;
         
       },
       register() {
@@ -250,8 +280,8 @@
         let url=`?redirectURL=${redirectURL}`;
         window.location.href=`http://localhost:5003/login${url}`;*/
         let redirectURL = window.location.href;
-        let url=`?redirectURL=${redirectURL}`;
-        window.location.href=`${loginPlatform}/register${url}`;
+        let url = `?redirectURL=${redirectURL}`;
+        window.location.href = `${loginPlatform}/register${url}`;
       },
       /*changTop() {
         if (this.$route.path == "/login") {
@@ -637,9 +667,9 @@
           }
         }
       }
-      .ft-box:nth-child(3){
+      .ft-box:nth-child(3) {
         margin-left 130px
-        li{
+        li {
           cursor pointer
           border 1px solid #ffffff
           padding 4px
@@ -647,6 +677,98 @@
       }
       .ft-box:last-child {
         float right
+      }
+    }
+  }
+</style>
+<style lang="stylus">
+  .dialog {
+    .el-dialog--center {
+      border-radius: 10px;
+    }
+    .el-dialog__header {
+      display none
+    }
+    .el-dialog__body {
+      padding-top 28px
+      padding-bottom 28px
+      position relative
+      .content {
+        .header{
+          text-align center
+          .close{
+            display inline-block
+            width 15px
+            height 15px
+            position absolute
+            top 12px
+            right 20px
+            background-image: url('./common/images/close.png');
+            background-position: top left;
+            background-repeat: no-repeat;
+          }
+          .phone{
+            font-size: 18px;
+            color: #c6351e;
+            margin-bottom 8px
+          }
+          .tip{
+            color #666666
+          }
+        }
+        .mainer{
+          margin-top 40px
+          margin-left 25px
+          label{
+            color #222222
+            font-size 18px
+          }
+          input,textarea{
+            color #333333
+            box-sizing border-box
+            outline:none;
+            border 1px solid #d2d2d2
+            resize:none;
+            width 210px
+            padding-left 12px
+          }
+          input:focus,textarea:focus{
+            border 1px solid #c6351e
+          }
+          input{
+            height 26px
+          }
+          textarea{
+            height 130px
+          }
+          .name{
+            margin-bottom 22px
+          }
+          .phone{
+            margin-bottom 22px
+          }
+          .content{
+            label{
+              vertical-align top
+            }
+            textarea{
+              vertical-align top
+            }
+          }
+        }
+      }
+    }
+    .el-dialog__footer{
+      padding-top 0
+      padding-bottom 20px
+      .el-button,.el-button--primary{
+        border none
+        width: 94px;
+        height: 30px;
+        background-color: #c6351e;
+        border-radius: 8px;
+        padding 0
+        font-size: 16px;
       }
     }
   }
