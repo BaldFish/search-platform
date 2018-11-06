@@ -3,6 +3,7 @@
     <div class="head-wrap" v-if="isShowTopSearch">
       <div class="head">
         <a class="logo" href="/">
+          <img src="./common/images/logo.png" alt="">
           <!--<p>Trusted Assets Blockchain</p>-->
         </a>
         <ul class="platform">
@@ -382,7 +383,7 @@
         color: #ffffff;
         font-size 12px
       }
-      .logo {
+      /*.logo {
         display inline-block
         color #ffffff
         background-image: url('./common/images/logo.png');
@@ -403,6 +404,24 @@
           bottom 0
         }
         
+      }*/
+      .logo {
+        float left
+        box-sizing border-box
+        font-size: 0px;
+        display: table-cell;
+        width: 150px;
+        height: 50px;
+        vertical-align: top;
+        text-align: center;
+        img {
+          vertical-align: top;
+          max-width 150px
+          max-height 46px
+          position: relative;
+          top: 50%;
+          transform: translateY(-50%);
+        }
       }
       .platform {
         box-sizing border-box
