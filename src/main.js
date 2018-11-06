@@ -18,7 +18,21 @@ import VueAreaLinkage from 'vue-area-linkage';
 Vue.use(VueAreaLinkage);
 
 import '@/common/js/validate.js'
-
+/*router.afterEach( ( to, from, next ) => {
+  if(to.path==="/developer"){
+    setTimeout(()=>{
+      var _hmt = _hmt || [];
+      (function() {
+        //每次执行前，先移除上次插入的代码
+        document.getElementById('baidu_tj') && document.getElementById('baidu_tj').remove();
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?789ec1f4aae21044c502f578fb68e17a";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    },0);
+  }
+} );*/
 Vue.config.productionTip = false;
 /* eslint-disable no-new */
 const store = new Vuex.Store({
