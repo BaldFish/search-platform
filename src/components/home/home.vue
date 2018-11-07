@@ -716,6 +716,7 @@
         })
       },
       getDetails(apiKey, assetId) {
+        var tempWindow=window.open('_blank');
         axios({
           method: "GET",
           url: `${baseURL}/v1/asset/redirect/${apiKey}/${assetId}`,
@@ -724,7 +725,7 @@
           }
         }).then((res) => {
           //window.open(`http://localhost:5000/caseDetails?apikey=${apiKey}&assetid=${assetId}`, "_blank")
-          window.open(res.data.url, "_blank")
+          tempWindow.location=res.data.url
         }).catch((err) => {
           console.log(err);
         })
