@@ -68,27 +68,27 @@
       center class="dialog">
       <div class="content">
         <div class="header">
-          <a class="close" href="javascript:void(0)"></a>
+          <a class="close" href="javascript:void(0)" @click="close"></a>
           <p class="phone">咨询热线：010-58205388</p>
           <p class="tip">请填写一下信息，我们会尽快和您联系</p>
         </div>
         <div class="mainer">
           <div class="name">
             <label for="name">您的姓名：</label>
-            <input type="text" id="name">
+            <input type="text" id="name" v-model="name">
           </div>
           <div class="phone">
             <label for="phone">手机号码：</label>
-            <input type="text" id="phone">
+            <input type="text" id="phone" v-model="phone">
           </div>
           <div class="content">
             <label for="content">留言内容：</label>
-            <textarea id="content"></textarea>
+            <textarea id="content" v-model="content"></textarea>
           </div>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-    <el-button type="primary" @click="centerDialogVisible = false">提交留言</el-button>
+    <el-button type="primary" @click="submitAdvise">提交留言</el-button>
   </span>
     </el-dialog>
     <div class="footer-wrap">
@@ -106,7 +106,7 @@
         </div>
         <div class="ft-box">
           <ul class="text">
-            <li @click="centerDialogVisible = true">意见和建议</li>
+            <li @click="advise">意见和建议</li>
           </ul>
         </div>
         <div class="ft-box">
@@ -135,8 +135,8 @@
   import {baseURL, loginPlatform, exchangePlatform, transferPlatform, searchPlatform} from '@/common/js/public.js';
   import axios from "axios";
   import utils from "@/common/js/utils.js";
-  
-  
+
+  const querystring = require('querystring');
   export default {
     name: 'App',
     components: {},
@@ -147,7 +147,11 @@
     },
     data() {
       return {
-        centerDialogVisible: true,
+        name:"",
+        phone:"",
+        content:"",
+        tipName:"",
+        centerDialogVisible: false,
         isRouterAlive: true,
         switchover: false,
         isLogin: false,
@@ -266,14 +270,66 @@
       }*/
     },
     methods: {
+      advise(){
+        this.name="";
+        this.phone="";
+        this.content="";
+        this.centerDialogVisible=true
+      },
+      close(){
+        this.centerDialogVisible=false
+      },
+      submitAdvise(){
+        if(this.content===""){
+          this.tipName="反馈内容";
+          this.openTip();
+          return
+        }
+        if(this.phone===""){
+          this.tipName="手机号码";
+          this.openTip();
+          return
+        }
+        if(this.name===""){
+          this.tipName="姓名";
+          this.openTip();
+          return
+        }
+        let data={
+          name:this.name,
+          phone:this.phone,
+          content:this.content,
+          platform:1,
+        };
+        //提交请求
+        axios({
+          method: 'post',
+          url: `${baseURL}/v1/users/feedback`,
+          data: querystring.stringify(data),
+        }).then(res => {
+          this.centerDialogVisible=false
+        }).catch(error => {
+          console.log(error);
+        })
+      },
+      openTip() {
+        this.$confirm(`${this.tipName}, 不能为空！`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          center: true,
+          showCancelButton:false
+        }).then(() => {
+        }).catch(() => {
+        });
+      },
       login() {
-        /*let redirectURL = "http://localhost:5002";
+        let redirectURL = "http://localhost:5002";
         let url=`?redirectURL=${redirectURL}`;
-        window.location.href=`http://localhost:5003/login${url}`;*/
-        let redirectURL = window.location.href;
+        window.location.href=`http://localhost:5003/login${url}`;
+        /*let redirectURL = window.location.href;
         let url = `?redirectURL=${redirectURL}`;
-        window.location.href = `${loginPlatform}/login${url}`;
-        
+        window.location.href = `${loginPlatform}/login${url}`;*/
       },
       register() {
         /*let redirectURL = "http://localhost:5002";
