@@ -324,12 +324,12 @@
         });
       },
       login() {
-        let redirectURL = "http://localhost:5002";
+        /*let redirectURL = "http://localhost:5002";
         let url=`?redirectURL=${redirectURL}`;
-        window.location.href=`http://localhost:5003/login${url}`;
-        /*let redirectURL = window.location.href;
+        window.location.href=`http://localhost:5003/login${url}`;*/
+        let redirectURL = window.location.href;
         let url = `?redirectURL=${redirectURL}`;
-        window.location.href = `${loginPlatform}/login${url}`;*/
+        window.location.href = `${loginPlatform}/login${url}`;
       },
       register() {
         /*let redirectURL = "http://localhost:5002";
@@ -384,10 +384,10 @@
         }).then(res => {
           sessionStorage.removeItem('loginInfo');
           sessionStorage.removeItem('userInfo');
-          document.cookie = `token=;expires=${new Date(0)}`;
-          document.cookie = `user_id=;expires=${new Date(0)}`;
-          /*document.cookie = `token=;expires=${new Date(0)};domain=.dadajs.com.cn`;
-          document.cookie = `user_id=;expires=${new Date(0)};domain=.dadajs.com.cn`;*/
+          /*document.cookie = `token=;expires=${new Date(0)}`;
+          document.cookie = `user_id=;expires=${new Date(0)}`;*/
+          document.cookie = `token=;expires=${new Date(0)};domain=.dadajs.com.cn`;
+          document.cookie = `user_id=;expires=${new Date(0)};domain=.dadajs.com.cn`;
           this.switchover = false;
           location.reload()
         }).catch(error => {
