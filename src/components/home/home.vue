@@ -913,7 +913,8 @@
           display inline-block
           height: 50px
           margin: 0 auto
-          margin-left 30px /*.tab-tips {
+          margin-left 30px
+          /*.tab-tips {
             font-size: 16px;
             color: #666666;
             display inline-block
