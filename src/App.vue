@@ -22,8 +22,8 @@
           <ul v-if="switchover">
             <!--<li><a href="http://localhost:5000/personalAssets" target="_blank">个人中心</a></li>
             <li><a href="http://localhost:5000/securityCenter" target="_blank">安全中心</a></li>-->
-            <li><a href="https://exchange-test.datajs.com.cn/personalAssets" target="_blank">个人中心</a></li>
-            <li><a href="https://exchange-test.datajs.com.cn/securityCenter" target="_blank">安全中心</a></li>
+            <li><a href="https://exchange.datajs.com.cn/personalAssets" target="_blank">个人中心</a></li>
+            <li><a href="https://exchange.datajs.com.cn/securityCenter" target="_blank">安全中心</a></li>
             <li @click.stop="dropOut">退出</li>
           </ul>
         </div>
