@@ -767,6 +767,7 @@
           } else if(this.bulkBuyData.nums ==="1"){
             let data = {};
             data.nums = 1;
+            var tempWindow=window.open('_blank');
             axios({
               method: "POST",
               url: `${baseURL}/v1/order/${this.userId}/${this.apiKey}/${this.assetId}`,
@@ -776,12 +777,13 @@
               },
               data: querystring.stringify(data),
             }).then((res) => {
-              window.open(res.data.judge_url)
+              tempWindow.location=res.data.judge_url;
               //window.open(`http://localhost:5000/checkOrder?order_id=${res.data.orderNum}`)
             }).catch((err) => {
               console.log(err);
             })
           } else {
+            var tempWindow=window.open('_blank');
             axios({
               method: "POST",
               url: `${baseURL}/v1/order/batch/${this.userId}/${this.apiKey}`,
@@ -791,7 +793,7 @@
               },
               data: querystring.stringify(this.bulkBuyData),
             }).then((res) => {
-              window.open(res.data.judge_url)
+              tempWindow.location=res.data.judge_url;
               //window.open(`http://localhost:5000/checkOrder?order_id=${res.data.orderNum}`)
             }).catch((err) => {
               console.log(err);
