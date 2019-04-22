@@ -9,19 +9,12 @@
           <li v-for="(item,index) of toggleParam" @click="platform(index)" :class="{active:index===toggleIndex}">{{item}}</li>
         </ul>
         <a href="/">欢迎来到 数据集市 ！</a>
-        <!--<div class="favorite" @click="turnFavorite">
-          <span class="s_text">收藏夹</span>
-          <span class="s_num">{{favoriteCount}}</span>
-        </div>-->
         <div class="no_login" v-if="!isLogin">
           <a href="javascript:void(0)" @click="login">登录/注册</a>
-          <!--<a href="javascript:void(0)" @click="register">免费注册</a>-->
         </div>
         <div class="login" v-if="isLogin" @mouseleave.stop="leaveUl">
           <div @click.stop="toggle">{{userName}} <img src="./common/images/down.png" alt=""></div>
           <ul v-if="switchover">
-            <!--<li><a href="http://localhost:5000/personalAssets" target="_blank">个人中心</a></li>
-            <li><a href="http://localhost:5000/securityCenter" target="_blank">安全中心</a></li>-->
             <li><a href="https://exchange-test.datajs.com.cn/personalAssets" target="_blank">个人中心</a></li>
             <li><a href="https://exchange-test.datajs.com.cn/securityCenter" target="_blank">安全中心</a></li>
             <li @click.stop="dropOut">退出</li>
@@ -29,35 +22,6 @@
         </div>
       </div>
     </div>
-    <!--<div class="login-header" v-if="isShowLogin">
-      <div class="login-header-cont">
-        <router-link to="/home">
-          <img src="./common/images/login_header.png" alt="">
-        </router-link>
-      </div>
-    </div>
-    <div class="forget_psw_header" v-if="isShowRegister">
-      <section>
-        <router-link to="/home">
-          <img src="./common/images/register_logo.png" alt="">
-        </router-link>
-        <p>已有账号，立即
-          <router-link to="/login" class="to_login">登录</router-link>
-        </p>
-      </section>
-    </div>
-    <div class="forget_psw_header" v-if="isShowForgetPassword">
-      <section>
-        <router-link to="/home">
-          <img src="./common/images/forget_psw_logo.png" alt="">
-        </router-link>
-        <p>已有账号，立即
-          <router-link to="/login" class="to_login">登录</router-link>
-        </p>
-      </section>
-    </div>-->
-    <!--<my-topSearch v-if="isShowTopSearch"></my-topSearch>
-    <my-toggle :toggleIndex="toggleIndex"></my-toggle>-->
     <div class="main_wrap">
       <router-view class="main" v-if="isRouterAlive"></router-view>
     </div>
@@ -172,7 +136,7 @@
         isShowRegister: false,
         isShowForgetPassword: false,
         toggleIndex: 0,
-        toggleParam: ["搜索", "交易平台", "开发者计划"],
+        toggleParam: ["搜索", "交易平台", "转让平台","开发者计划"],
         userId: '',
         token: "",
       }
@@ -197,12 +161,10 @@
             this.token = JSON.parse(sessionStorage.getItem("loginInfo")).token;
             this.userName = JSON.parse(sessionStorage.getItem("userInfo")).phone;
             this.isLogin = true;
-            //this.acquireFavoriteCount();
           } else {
             this.isLogin = false;
             sessionStorage.removeItem('loginInfo');
             sessionStorage.removeItem('userInfo');
-            //this.dropOut()
           }
         }).catch((err) => {
           console.log(err);
@@ -211,7 +173,6 @@
         sessionStorage.removeItem('loginInfo');
         sessionStorage.removeItem('userInfo');
       }
-      //this.changTop()
     },
     mounted() {
       if (this.pathname === "/developer") {
@@ -240,12 +201,10 @@
             this.token = JSON.parse(sessionStorage.getItem("loginInfo")).token;
             this.userName = JSON.parse(sessionStorage.getItem("userInfo")).phone;
             this.isLogin = true;
-            //this.acquireFavoriteCount();
           } else {
             this.isLogin = false;
             sessionStorage.removeItem('loginInfo');
             sessionStorage.removeItem('userInfo');
-            //this.dropOut()
           }
         }).catch((err) => {
           console.log(err);
@@ -254,7 +213,6 @@
         sessionStorage.removeItem('loginInfo');
         sessionStorage.removeItem('userInfo');
       }
-      //this.changTop()
     },
     computed: {
       pathname: {
@@ -264,9 +222,6 @@
         set: function () {
         }
       },
-      /*favoriteCount: function () {
-        return this.$store.state.favoriteCount
-      }*/
     },
     watch: {
       $route(to, from) {
@@ -276,9 +231,6 @@
           this.toggleIndex = 0
         }
       },
-      /*favoriteCount: function () {
-        this.acquireFavoriteCount();
-      }*/
     },
     methods: {
       advise(){
@@ -351,34 +303,6 @@
         let url = `?redirectURL=${redirectURL}`;
         window.location.href = `${loginPlatform}/register${url}`;
       },
-      /*changTop() {
-        if (this.$route.path == "/login") {
-          this.isShowTopSearch = false;
-          this.isShowLogin = true;
-          this.isShowRegister = false;
-          this.isShowForgetPassword = false;
-        } else if (this.$route.path == "/register") {
-          this.isShowTopSearch = false;
-          this.isShowLogin = false;
-          this.isShowRegister = true;
-          this.isShowForgetPassword = false;
-        } else if (this.$route.path == "/forgetPassword") {
-          this.isShowTopSearch = false;
-          this.isShowLogin = false;
-          this.isShowRegister = false;
-          this.isShowForgetPassword = true;
-        } else if (this.$route.path == "/contract") {
-          this.isShowTopSearch = false;
-          this.isShowLogin = false;
-          this.isShowRegister = false;
-          this.isShowForgetPassword = false;
-        } else {
-          this.isShowTopSearch = true;
-          this.isShowLogin = false;
-          this.isShowRegister = false;
-          this.isShowForgetPassword = false;
-        }
-      },*/
       reload() {
         this.isRouterAlive = false;
         this.$nextTick(() => {
@@ -414,10 +338,12 @@
       },
       platform(index) {
         if (index === 0) {
-          window.location.href = searchPlatform;
+          window.location.href = searchPlatform
         } else if (index === 1) {
-          window.location.href = exchangePlatform;
+          window.location.href = exchangePlatform
         } else if (index === 2) {
+          window.location.href = transferPlatform
+        }else if (index === 3) {
           this.$router.push("/developer");
         }
       },
@@ -432,26 +358,6 @@
         }).catch(() => {
         });
       },
-      /*acquireFavoriteCount() {
-        axios({
-          method: "GET",
-          url: `${baseURL}/v1/shopcart/count/${this.userId}`,
-          headers: {
-            "Content-Type": "application/json",
-          }
-        }).then((res) => {
-          this.$store.state.favoriteCount = res.data;
-        }).catch((err) => {
-          console.log(err);
-        })
-      },*/
-      /*turnFavorite() {
-        if (JSON.parse(sessionStorage.getItem("loginInfo"))) {
-          this.$router.push("/favorite")
-        } else {
-          this.open()
-        }
-      },*/
     }
   }
 </script>
@@ -618,44 +524,7 @@
       }
     }
   }
-  
-  /*.login-header {
-    width: 100%;
-    height: 130px;
-    background-color: #f3f3f3;
-    .login-header-cont {
-      width: 1200px;
-      margin: 0 auto;
-      height: 100%;
-      padding-top 36px
-      img {
-        width: 280px;
-        height: 58px;
-        display: inline-block;
-      }
-    }
-  }
-  
-  .forget_psw_header {
-    width: 100%;
-    height: 130px;
-    background-color: #f3f3f3;
-    section {
-      width: 1200px;
-      margin: 0 auto;
-      padding-top: 36px;
-      p {
-        float: right;
-        margin-top: 36px;
-        font-size: 16px;
-        color: #222222;
-        .to_login {
-          color: #c6351e;
-        }
-      }
-    }
-  }
-  */
+    
   .main_wrap {
     flex: 1;
     box-sizing: border-box;
