@@ -730,16 +730,6 @@
           console.log(err);
         })
       },
-      /*getReportDetails(val) {
-        this.$store.commit("changeReportDetails", _.find(this.searchList, function (o) {
-          return o.id === val
-        }));
-      },*/
-      /*getCaseDetails(val) {
-        this.$store.commit("changeCaseDetails", _.find(this.searchList, function (o) {
-          return o.id === val
-        }));
-      },*/
       handleCurrentChange(val) {
         this.page = val;
         this.pagingSearch()
@@ -834,9 +824,6 @@
           this.open()
         }
       },
-      /*getBuy(val) {
-        this.$store.commit("changeBuy", val);
-      },*/
       //获取车系品牌列表
       acquireBrandList() {
         axios({

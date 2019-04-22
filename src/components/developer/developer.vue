@@ -99,7 +99,6 @@
             margin-top 20px
           }
           a{
-            //display inline-block
             position absolute
             top 46px
             right 20px
