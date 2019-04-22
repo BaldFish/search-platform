@@ -208,7 +208,7 @@
             <!--<div :class="item.shopcart_id?'like':'dislike'" @click="toggleLike(item.id)">收藏</div>-->
             <div class="price_box">
               <a href="javascript:void(0)"><p class="price">¥{{item.price}}</p></a>
-              <a href="/caseSource" @click="getCaseSource(item.id)"><p class="tracing">可信溯源</p></a>
+              <a href="javascript:void(0)"><p class="tracing">可信溯源</p></a>
               <a href="javascript:void(0)" @click.stop="buy(item.id)"><p class="buy">一键购买</p></a>
             </div>
             <div class="bar"></div>
@@ -234,7 +234,7 @@
             <!--<div :class="item.shopcart_id?'like':'dislike'" @click="toggleLike(item.id)">收藏</div>-->
             <div class="price_box">
               <a href="javascript:void(0)"><p class="price">¥{{item.price}}</p></a>
-              <a href="/caseSource" @click="getCaseSource(item.id)"><p class="tracing">可信溯源</p></a>
+              <a href="javascript:void(0)"><p class="tracing">可信溯源</p></a>
               <a href="javascript:void(0)" @click.stop="buy(item.id)"><p class="buy">一键购买</p></a>
             </div>
             <div class="bar"></div>
